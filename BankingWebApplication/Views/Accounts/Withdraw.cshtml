@@ -1,0 +1,36 @@
+﻿@model DAL.Entities.Account;
+@{
+    ViewData["Title"] = "Withdraw";
+}
+
+
+
+<link rel="stylesheet" href="~/css/ui.css">
+<h2>Withdraw</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Withdraw">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="Id" disabled="disabled" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Amount</label>
+                <input asp-for="Amount" value="" placeholder="Enter Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Process" class="btn btn-default" />
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

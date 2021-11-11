@@ -1,0 +1,86 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+
+
+.nav.navbar-nav li a {
+    color: #fff;
+    background-color: #1a8cff;
+    border: 3px solid white;
+    border-radius: 25px;
+    border-top: hidden;
+    margin-left: 6px;
+    font-size: 18px;
+}
+
+.nav.navbar-nav a:hover {
+   opacity: 0.5;
+}
+
+.navbar-brand {
+    color: white;
+    font-size: 32px;
+    background-image: linear-gradient(to bottom right,white,black);
+    margin-top:1px;
+    border-radius: 20px 150px 20px 150px;
+}
+
+    .navbar-brand:hover {
+        background: mediumpurple;
+       
+    }
+
+
+ .navbar-fixed-top {
+    margin-top: 0px;
+    padding: 0px;
+}
+
+
+.form-group input {
+    color: white;
+    background-color:dimgray;
+}
+
+    .row {
+       color:white;
+       margin-left:350px;
+       margin-top:50px;
+       width:80%;
+ 
+    }

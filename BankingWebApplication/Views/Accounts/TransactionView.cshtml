@@ -1,0 +1,56 @@
+﻿@model IEnumerable<DAL.Entities.Transaction>
+@{
+    ViewData["Title"] = "TransactionView";
+}
+
+
+
+<h2>Transaction List</h2>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionNo)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Accountno)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionInfo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.TransactionNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Accountno)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionInfo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+
+
+
+            </tr>
+        }
+    </tbody>
+</table>

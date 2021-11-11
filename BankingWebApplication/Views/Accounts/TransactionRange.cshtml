@@ -1,0 +1,43 @@
+﻿@model DAL.Entities.Account
+@{
+    ViewData["Title"] = "TransactionRange";
+}
+
+
+
+<link rel="stylesheet" href="~/css/ui.css">
+<h2>Transaction Search</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="TransactionView">
+
+            <input type="hidden" value="@Model.AccountNo" name="id" />
+
+            <div class="form-group">
+                <label class="control-label">StartTime</label>
+                <input name="startTime" type="date" class="form-control" />
+
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">EndTime</label>
+                <input name="EndTime" type="date" class="form-control" />
+
+            </div>
+
+
+
+
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-default" />
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
