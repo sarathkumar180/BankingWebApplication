@@ -24,7 +24,7 @@
             </th>
 
             <th>
-                @Html.DisplayNameFor(model => model.CustomerId)
+                @Html.DisplayNameFor(model => model.CustomerNo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Interestrate)
@@ -38,7 +38,7 @@
     {
         @foreach (var item in Model.Where(x => x.AccountStatus))
         {
-            if (Context.Session.GetString("CustomerNo") == item.CustomerId.ToString())
+            if (Context.Session.GetString("CustomerNo") == item.CustomerNo.ToString())
             {
     <tr>
         <td>
@@ -63,9 +63,7 @@
 
         <td>
 
-            if (Model
-            .Where(x => x.AccountStatus &&
-            x.CustomerNo.ToString() == Context.Session.GetString("CustomerNo")).Count() >= 1)
+            @if (Model.Count(x => x.AccountStatus && x.CustomerNo.ToString() == Context.Session.GetString("CustomerNo")) >= 1)
             {
             <a asp-action="Deposit" asp-route-id="@item.AccountNo">Deposit</a> <span>|</span>
             <a asp-action="Withdraw" asp-route-id="@item.AccountNo">Withdraw</a> <span>|</span>

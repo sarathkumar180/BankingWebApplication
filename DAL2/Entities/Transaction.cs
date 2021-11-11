@@ -48,7 +48,7 @@ namespace DAL.Entities
         {
             string transactionInfo;
             int accountno = account.AccountNo;
-            int customerId = account.CustomerId;
+            int customerId = account.CustomerNo;
 
             Transaction transaction = new Transaction()
             {

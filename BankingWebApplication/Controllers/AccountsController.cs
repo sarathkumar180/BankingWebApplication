@@ -73,7 +73,7 @@ namespace BankingWebApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult OpenAccount([Bind("Balance,AccountNo,AccountType,CustomerNo,AccountStatus,MaturityDateTime,Interestrate")] Account account)
+        public ActionResult OpenAccount([Bind("Balance,AccountNo,AccountType,CustomerNo,AccountStatus,Interestrate")] Account account)
         {
 
             if (ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace BankingWebApplication.Controllers
                     {
                         AccountNo = accountbl.GenerateAccountno(),
                       
-                        CustomerId = account.CustomerId,
+                        CustomerNo = account.CustomerNo,
                         Balance = account.Balance,
                         AccountStatus = accountbl.GetAccountStatus(),
                         AccountType = account.AccountType,
@@ -119,7 +119,7 @@ namespace BankingWebApplication.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerId);
+            ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerNo);
             return View(account);
         }
 
@@ -155,7 +155,7 @@ namespace BankingWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerId);
+            ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerNo);
             return View(account);
         }
 
@@ -243,7 +243,7 @@ namespace BankingWebApplication.Controllers
 
                 var AccList =
                     _context.Account
-                    .Where(a => a.CustomerId == acc.CustomerId)
+                    .Where(a => a.CustomerNo == acc.CustomerNo)
                     .Where(a => a.AccountNo != acc.AccountNo).ToList();
 
                 TransferAccount ta = new TransferAccount()
@@ -290,7 +290,7 @@ namespace BankingWebApplication.Controllers
             {
                 var account = _context.Account.Where(x => x.AccountNo == id).FirstOrDefault();
 
-                var list = _context.Transaction.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerId).Take(10).OrderByDescending(t => t.Time);
+                var list = _context.Transaction.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo).Take(10).OrderByDescending(t => t.Time);
 
                 return View(list);
             }
@@ -315,7 +315,7 @@ namespace BankingWebApplication.Controllers
             var account = _context.Account.Where(x => x.AccountNo == id).FirstOrDefault();
 
             var list = _context.Transaction
-                .Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerId &&  x.Time > startTime && x.Time <= endTime);
+                .Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo &&  x.Time > startTime && x.Time <= endTime);
            
 
                 return View(list);

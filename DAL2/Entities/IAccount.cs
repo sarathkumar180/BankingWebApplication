@@ -11,7 +11,7 @@
         decimal Balance { get; set; }
         bool AccountStatus { get; set; }
 
-        int CustomerId { get; set; }
+        int CustomerNo { get; set; }
         //Customer customer { get; set; } // account belong to 1 customer
         decimal Interestrate { get; set; }
 

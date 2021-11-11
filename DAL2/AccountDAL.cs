@@ -48,7 +48,7 @@ namespace DAL
             List<IAccount> tempList = new List<IAccount>();
             foreach(var account in accounts)
             {
-                if(account.CustomerId == id && account.AccountStatus)
+                if(account.CustomerNo == id && account.AccountStatus)
                 {
                     tempList.Add(account);
                 }

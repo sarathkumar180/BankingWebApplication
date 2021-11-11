@@ -66,7 +66,7 @@ namespace DAL.Entities
 
             foreach(var acc in _savingsAccounts)
             {
-                if(acc.CustomerId == id)
+                if(acc.CustomerNo == id)
                 {
                     tempList.Add(acc);
                 }

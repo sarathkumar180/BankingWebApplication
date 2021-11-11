@@ -18,10 +18,16 @@ namespace BusinessLayer
 
         }
 
-        public  void Register(Customer customer , ApplicationDbContext _context)
+        public  bool Register(Customer customer , ApplicationDbContext _context)
         {
-             customerdal.Register(customer,_context);
+             return customerdal.Register(customer,_context);
        
+        }
+
+        public bool UpdateCustomer(Customer customer, ApplicationDbContext _context)
+        {
+            return customerdal.UpdateCustomer(customer, _context);
+
         }
 
         public List<Customer> GetAllCustomer()
@@ -29,9 +35,9 @@ namespace BusinessLayer
             return customerdal.GetAllCustomer();
         }
 
-        public int GenerateCustomerId()
+        public int GenerateCustomerNo(ApplicationDbContext context)
         {
-            return customerdal.GenerateCustomerId();
+            return customerdal.GenerateCustomerNo(context);
         }
 
         public Customer Login(User user, ApplicationDbContext context)
@@ -39,7 +45,10 @@ namespace BusinessLayer
             return customerdal.Login(user, context);
         }
 
-      
+        public Customer GetCustomerFromCustomerNo(int customerNo, ApplicationDbContext context)
+        {
+            return customerdal.GetCustomerFromCustomerNo(customerNo, context);
+        }
 
     }
 }

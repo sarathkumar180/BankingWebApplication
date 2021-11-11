@@ -23,7 +23,7 @@ namespace DAL.Entities
         public int AccountNo { get; set; }
        
         public string AccountType { get; set; }
-        public int CustomerId { get; set; }
+        public int CustomerNo { get; set; }
 
         public bool AccountStatus { get; set; }
 

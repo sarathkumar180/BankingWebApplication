@@ -76,14 +76,14 @@ namespace BankingWebApplication.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? customerNo)
         {
-            if (id == null)
+            if (customerNo == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = customerbl.GetCustomerFromCustomerNo(customerNo.Value,_context);
             if (customer == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace BankingWebApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerNo,UserName,Password,FirstName,LastName,Email,Address")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("CustomerNo,UserName,Password,FirstName,LastName,PhoneNumber,Email,Address")] Customer customer)
         {
             if (id != customer.CustomerNo)
             {
@@ -105,22 +105,7 @@ namespace BankingWebApplication.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.CustomerNo))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                
                 return RedirectToAction("Index","Home");
             }
             return View(customer);
@@ -183,17 +168,17 @@ namespace BankingWebApplication.Controllers
             {
                 ViewBag.UserName = HttpContext.Session.GetString("UserName"); //use to display username for upper right nav 
                 
-                ViewBag.CustomerId = HttpContext.Session.GetString("CustomerNo");//determine differnt nav view for login and logout
+                ViewBag.CustomerId = int.Parse((HttpContext.Session.GetString("CustomerNo")));//determine differnt nav view for login and logout
                 //also use CustomerNo to determine if the user is login or not
 
-                return RedirectToAction($"Edit/{ViewBag.CustomerId}","Customers");
+                return RedirectToAction($"Edit","Customers",new { customerNo = ViewBag.CustomerId });
                
                 
             }
             else
             {
 
-                return RedirectToAction("Customers", "Login");
+                return RedirectToAction("Login", "Customers");
       
             }
         }

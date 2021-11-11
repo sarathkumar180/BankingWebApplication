@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DAL.Entities;
 using System.Linq;
 using DAL.Enum;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL
 {
@@ -27,44 +29,41 @@ namespace DAL
 
 
         #region async void Register(Customer customer, ApplicationDbContext _context)
-        public void Register(Customer customer, ApplicationDbContext _context)
+        public bool Register(Customer customer, ApplicationDbContext _context)
         {
+            try
+            {
+                customer.CustomerNo = GenerateCustomerNo(_context);
+                //for unit testing
+                customers.Add(customer);
 
-            #region insert data to database
-            //connect to database, store a record
-            // cmd.ExecuteNonQuery()
+                //add data to database;
 
+                _context.Add(customer);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return  false;
+            }
+        }
 
-            //StringBuilder sb = new StringBuilder();
-            //sb.Append("INSERT INTO Customer");
-            //sb.Append("(FirstName, LastName, PhoneNumber, Address)");
-            //sb.Append("Values(");
-            //sb.Append($"'{cus.FirstName}', '{cus.LastName}', ' {cus.PhoneNumber}', ' {cus.Address}' ");
-            //sb.Append(")");
+        public bool UpdateCustomer(Customer customer, ApplicationDbContext context)
+        {
+            try
+            {
+                context.Update(customer);
+                context.SaveChanges();
+                return true;
 
-
-            //using (SqlConnection conn = new SqlConnection(_connStr))
-            //{
-            //    using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-            //    {
-            //        conn.Open();
-            //        cmd.ExecuteNonQuery();
-
-            //    }
-            //}
-
-
-            #endregion
-
-
-            //for unit testing
-            customers.Add(customer);
-
-            //add data to database;
-
-            _context.Add(customer);
-            _context.SaveChanges();
-
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
 
         }
         #endregion
@@ -128,26 +127,22 @@ namespace DAL
             #endregion
             return customers;
 
-
         }
 
-
-
-        public int GenerateCustomerId()
+        public int GenerateCustomerNo(ApplicationDbContext context)
         {
-
             //int range: -2.147483648 x 10^9 to 2.147483647 x 10^9
 
             int intMax = int.MaxValue;
-            int id = 900000001;
+            int id = 90000000;
+
+            customersId = GetAllCustiomers(context).Select(x => x.CustomerNo).ToList();
             //not yet checking the repeated value from database;
-            while (customersId.Contains(id) && id < intMax) //prevent never ending loop if all numbers are taken.
+            while (customersId != null && customersId.Contains(id) && id < intMax) //prevent never ending loop if all numbers are taken.
             {
                 id++;
 
             }
-
-            customersId.Add(id);
 
             return id;
 
@@ -164,6 +159,7 @@ namespace DAL
                                 UserName = c.UserName,
                                 CustomerNo = c.CustomerNo,
                                 Address = c.Address,
+                                PhoneNumber = c.PhoneNumber,
                                 Email = c.Email,
                                 FirstName = c.FirstName,
                                 LastName = c.LastName,
@@ -171,6 +167,49 @@ namespace DAL
                             }).FirstOrDefault();
 
             return userinfo;
+        }
+
+        public Customer GetCustomerFromCustomerNo(int customerNo, ApplicationDbContext context)
+        {
+
+            var userinfo = (from c in context.Customer
+                join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                where c.CustomerNo == customerNo
+                            select new Customer()
+                {
+                    Id = c.Id,
+                    UserName = c.UserName,
+                    CustomerNo = c.CustomerNo,
+                    Address = c.Address,
+                    PhoneNumber = c.PhoneNumber,
+                    Email = c.Email,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    CustomerRole = m != null ? (RoleEnum)m.RoleId : RoleEnum.Customer
+                }).FirstOrDefault();
+
+            return userinfo;
+        }
+
+        public IEnumerable<Customer> GetAllCustiomers(ApplicationDbContext context)
+        {
+
+            var allCUstomers = (from c in context.Customer
+                join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                select new Customer()
+                {
+                    Id = c.Id,
+                    UserName = c.UserName,
+                    CustomerNo = c.CustomerNo,
+                    Address = c.Address,
+                    PhoneNumber = c.PhoneNumber,
+                    Email = c.Email,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    CustomerRole = m != null ? (RoleEnum)m.RoleId : RoleEnum.Customer
+                }).AsEnumerable();
+
+            return allCUstomers;
         }
     }
 }
