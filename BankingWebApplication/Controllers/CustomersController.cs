@@ -96,17 +96,24 @@ namespace BankingWebApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CustomerNo,UserName,Password,FirstName,LastName,PhoneNumber,Email,Address")] Customer customer)
+        public async Task<IActionResult> Edit(int CustomerNo, [Bind("CustomerNo,UserName,Password,FirstName,LastName,PhoneNumber,Email,Address")] Customer customer)
         {
-            if (id != customer.CustomerNo)
+            if (CustomerNo != customer.CustomerNo)
             {
                 return NotFound();
             }
 
+            
             if (ModelState.IsValid)
             {
-                
-                return RedirectToAction("Index","Home");
+                bool success = customerbl.UpdateCustomer(customer, _context);
+                if(success)
+                    return RedirectToAction("Index","Home");
+                else
+                {
+                    ModelState.AddModelError(nameof(customer.CustomerNo), "Failed to update!");
+                    return View(customer);
+                }
             }
             return View(customer);
         }

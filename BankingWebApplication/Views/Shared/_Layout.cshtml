@@ -19,46 +19,11 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-form navbar-fixed-top" style="background-color:#1a8cff" >
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand" style="pointer-events:none;">Z-Bank</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Account</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-                <partial name="_LoginPartial" />
+    
+@await Component.InvokeAsync("Navigation", new { })
 
-                @if (Context.Session.GetString("CustomerNo") != null)
-                {
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a asp-area="" asp-controller="customers" asp-action="Welcome">Welcome! @Context.Session.GetString("UserName")</a></li>
-                        <li><a asp-area="" asp-controller="customers" asp-action="logout">Logout</a></li>
-                    </ul>
-                }
 
-                else
-                {
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a asp-area="" asp-controller="customers" asp-action="create">Register</a></li>
-                        <li><a asp-area="" asp-controller="customers" asp-action="Login">Login</a></li>
-                    </ul>
-                }
-
-            </div>
-        </div>
-    </nav>
-
-    <partial name="_CookieConsentPartial" />
+<partial name="_CookieConsentPartial" />
 
     <div class="container body-content">
         @RenderBody()

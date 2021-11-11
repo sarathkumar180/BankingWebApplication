@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Http
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<nav class="navbar navbar-form navbar-fixed-top" style="background-color:#1a8cff" >
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand" style="pointer-events:none;">Z-Bank</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Accounts</a></li>
+                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                @if (Context.Session.GetString("UserRole") != null)
+                {
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Payee</a></li>
+                }
+            </ul>
+            <partial name="_LoginPartial" />
+
+            @if (Context.Session.GetString("CustomerNo") != null)
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a asp-area="" asp-controller="customers" asp-action="Welcome">Welcome! @Context.Session.GetString("UserName")</a></li>
+                    <li><a asp-area="" asp-controller="customers" asp-action="logout">Logout</a></li>
+                </ul>
+            }
+
+            else
+            {
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a asp-area="" asp-controller="customers" asp-action="create">Register</a></li>
+                    <li><a asp-area="" asp-controller="customers" asp-action="Login">Login</a></li>
+                </ul>
+            }
+
+        </div>
+    </div>
+</nav>

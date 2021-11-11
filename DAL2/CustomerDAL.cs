@@ -151,7 +151,8 @@ namespace DAL
         public Customer Login(User user, ApplicationDbContext context)
         {
             var userinfo = (from c in context.Customer
-                            join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                            join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                            from urMapping in urm.DefaultIfEmpty()
                             where c.UserName == user.UserName && c.Password == user.Password
                             select new Customer()
                             {
@@ -163,7 +164,7 @@ namespace DAL
                                 Email = c.Email,
                                 FirstName = c.FirstName,
                                 LastName = c.LastName,
-                                CustomerRole = m != null ? (RoleEnum)m.RoleId : RoleEnum.Customer
+                                CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer
                             }).FirstOrDefault();
 
             return userinfo;
@@ -173,9 +174,10 @@ namespace DAL
         {
 
             var userinfo = (from c in context.Customer
-                join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                from urMapping in urm.DefaultIfEmpty()
                 where c.CustomerNo == customerNo
-                            select new Customer()
+                select new Customer()
                 {
                     Id = c.Id,
                     UserName = c.UserName,
@@ -185,7 +187,7 @@ namespace DAL
                     Email = c.Email,
                     FirstName = c.FirstName,
                     LastName = c.LastName,
-                    CustomerRole = m != null ? (RoleEnum)m.RoleId : RoleEnum.Customer
+                    CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer
                 }).FirstOrDefault();
 
             return userinfo;
