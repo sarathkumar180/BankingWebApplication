@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,8 @@ namespace BankingWebApplication.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customer.ToListAsync());
+            IEnumerable<Customer> customers = customerbl.GetAllCustomer(_context);
+            return View(customers);
         }
 
         // GET: Customers/Details/5
@@ -76,14 +78,14 @@ namespace BankingWebApplication.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? customerNo)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (customerNo == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var customer = customerbl.GetCustomerFromCustomerNo(customerNo.Value,_context);
+            var customer = customerbl.GetCustomerFromCustomerNo(id.Value,_context);
             if (customer == null)
             {
                 return NotFound();

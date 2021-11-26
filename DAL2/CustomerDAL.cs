@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using DAL.Entities;
 using System.Linq;
+using System.Net.Sockets;
 using DAL.Enum;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,64 +70,25 @@ namespace DAL
         }
         #endregion
 
-        public List<Customer> GetAllCustomer()
+        public List<Customer> GetAllCustomer(ApplicationDbContext context)
         {
+            try
+            {
 
-            #region GetAllCustomers From Database
-            // cmd.ExecuteReader()
-            //Customer customer = null;
-            //StringBuilder sb = new StringBuilder();
-            //sb.Append("SELECT * FROM Customer");
+                //customers = (from c in context.Customer
+                //    join crm in context.UserRolesMapping on c.Id equals crm.Id
+                //    where crm.RoleId == 3 //Ignore admin and Teller users
+                //    select c).ToList();
 
-            //using (SqlConnection conn = new SqlConnection(_connStr))
-            //{
-            //    using (SqlCommand cmd = new SqlCommand(sb.ToString(), conn))
-            //    {
-            //        conn.Open();
-            //        SqlDataReader reader = cmd.ExecuteReader();
-            //        while (reader.Read())
-            //        {
-            //            customer = new Customer();
-            //            customer.CustomerNo = (int)reader["CustomerNo"];
-            //            customer.FirstName = reader["FirstName"].ToString();
-            //            customer.LastName = reader["LastName"].ToString();
-            //            customer.PhoneNumber = reader["PhoneNumber"].ToString();
-            //            customer.Address = reader["Address"].ToString();
+                customers = context.Customer.ToList();
 
-            //            databaseList.Add(customer);
-
-
-            //        }
-
-            //    }
-            //}
-            //return databaseList;
-            #endregion
-            #region Fetch data from SQL - Disconnected Mode 
-            //var qry = "Select * FROM Customer";
-
-            //using (var conn = new SqlConnection(_connStr))
-            //{
-            //    using (var da = new SqlDataAdapter(qry, conn))
-            //    {
-            //        DataSet ds = new DataSet();
-            //        da.Fill(ds);// fire querry and fill with result data.
-
-            //        DataTable dt = ds.Tables[0]; 
-            //        foreach(DataRow row in dt.Rows)
-            //        {
-            //            Console.Write($"{row[1]}");
-            //            Console.Write($"{row[2]}");
-            //            Console.Write($"{row[3]}");
-            //            Console.Write($"{row["PhoneNumber"]}");
-            //            Console.WriteLine();
-            //        }
-
-            //    }
-            //}
-
-            #endregion
-            return customers;
+                return customers;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return customers;
+            }
 
         }
 

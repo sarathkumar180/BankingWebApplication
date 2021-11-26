@@ -30,9 +30,9 @@ namespace BusinessLayer
 
         }
 
-        public List<Customer> GetAllCustomer()
+        public List<Customer> GetAllCustomer(ApplicationDbContext _context)
         {
-            return customerdal.GetAllCustomer();
+            return customerdal.GetAllCustomer(_context);
         }
 
         public int GenerateCustomerNo(ApplicationDbContext context)

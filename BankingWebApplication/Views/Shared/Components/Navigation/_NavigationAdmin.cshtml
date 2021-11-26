@@ -5,7 +5,7 @@
 @{
 }
 
-<nav class="navbar navbar-form navbar-fixed-top" style="background-color:#1a8cff" >
+<nav class="navbar navbar-form navbar-fixed-top" style="background-color:#1a8cff">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -18,9 +18,8 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Home</a></li>
                 <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Accounts</a></li>
-                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                <li><a asp-area="" asp-controller="Customers" asp-action="Index">Customers</a></li>
                 <li><a asp-area="" asp-controller="Home" asp-action="Contact">Admin</a></li>
             </ul>
             <partial name="_LoginPartial" />
@@ -28,6 +27,7 @@
             @if (Context.Session.GetString("CustomerNo") != null)
             {
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li><a asp-area="" asp-controller="customers" asp-action="Welcome">Welcome! @Context.Session.GetString("UserName")</a></li>
                     <li><a asp-area="" asp-controller="customers" asp-action="logout">Logout</a></li>
                 </ul>
@@ -36,6 +36,7 @@
             else
             {
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li><a asp-area="" asp-controller="customers" asp-action="create">Register</a></li>
                     <li><a asp-area="" asp-controller="customers" asp-action="Login">Login</a></li>
                 </ul>

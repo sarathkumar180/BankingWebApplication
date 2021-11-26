@@ -39,8 +39,7 @@
         @foreach (var item in Model)
         {
 
-            @if (item.CustomerNo.ToString() == Context.Session.GetString("CustomerNo"))
-            {
+            
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
@@ -64,11 +63,12 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
+                <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo">Accounts</a> |
                 <a asp-action="Edit" asp-route-id="@item.CustomerNo">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.CustomerNo">Details</a>
             </td>
         </tr>
-            }
+            
 
         }
     </tbody>
