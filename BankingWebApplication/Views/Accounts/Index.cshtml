@@ -1,20 +1,19 @@
 ﻿@model IEnumerable<DAL.Entities.Account>
 
-@{
-    ViewData["Title"] = "Index";
-}
-@using Microsoft.AspNetCore.Http;
+@{ ViewData["Title"] = "Accounts"; }
 
-<h2>Account List</h2>
-
+<h2>@TempData["Header"]</h2>
 <p>
-    <a asp-action="OpenAccount">Open New Account</a>
+    <a asp-action="OpenAccount">Add New Account</a>
+    @{
+        TempData.Keep("CustomerNo");
+    }
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-               @Html.DisplayNameFor(model => model.AccountNo)
+                @Html.DisplayNameFor(model => model.AccountNo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.AccountType)
@@ -29,58 +28,60 @@
             <th>
                 @Html.DisplayNameFor(model => model.Interestrate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountStatus)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 
-    @if(Model !=null && Model.Any())
-    {
-        @foreach (var item in Model.Where(x => x.AccountStatus))
+        @*@if (Model != null && Model.Any())
+            {*@
+        @foreach (var item in Model)
         {
-            if (Context.Session.GetString("CustomerNo") == item.CustomerNo.ToString())
+
+<tr>
+    <td>
+        <a asp-action="TransactionList" asp-route-id="@item.AccountNo">@Html.DisplayFor(modelItem => item.AccountNo)</a>
+    </td>
+
+    <td>
+        @Html.DisplayFor(modelItem => item.AccountType)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Balance)
+    </td>
+
+
+    <td>
+        @Html.DisplayFor(modelItem => item.customer.CustomerNo)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Interestrate)
+    </td>
+    <td>
+        @Html.CheckBoxFor(modelItem => item.AccountStatus, new { disabled = "disabled" })
+    </td>
+
+    <td>
+
+        @if (item.AccountStatus)
+        {
+                    <a asp-action="Deposit" asp-route-id="@item.AccountNo">Deposit</a> <span>|</span>
+                    <a asp-action="Withdraw" asp-route-id="@item.AccountNo">Withdraw</a> <span>|</span>
+                                        <a asp-action="TransactionRange" asp-route-id="@item.AccountNo">Search</a> <span>|</span>}
+    </td>
+</tr>
+       }
+        @*}
+            else
             {
-    <tr>
-        <td>
-            <a asp-action="TransactionList" asp-route-id="@item.AccountNo">@Html.DisplayFor(modelItem => item.AccountNo)</a>
-        </td>
 
-        <td>
-            @Html.DisplayFor(modelItem => item.AccountType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Balance)
-        </td>
+                    <tr>
+                        <td> No Accounts found</td>
+                    </tr>
 
-
-        <td>
-            @Html.DisplayFor(modelItem => item.customer.CustomerNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Interestrate)
-        </td>
-
-
-        <td>
-
-            @if (Model.Count(x => x.AccountStatus && x.CustomerNo.ToString() == Context.Session.GetString("CustomerNo")) >= 1)
-            {
-            <a asp-action="Deposit" asp-route-id="@item.AccountNo">Deposit</a> <span>|</span>
-            <a asp-action="Withdraw" asp-route-id="@item.AccountNo">Withdraw</a> <span>|</span>
-            <a asp-action="TransactionRange" asp-route-id="@item.AccountNo">Search</a> <span>|</span>
-
-            }
-        </td>
-    </tr>}
-
-                }
-    }
-    else
-    {
-    
-    <tr>
-        <td> No Accounts found</td>
-    </tr>
-    }
+            }*@
     </tbody>
 </table>

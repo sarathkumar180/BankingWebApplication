@@ -31,7 +31,10 @@ namespace DAL
 
             if (allAccounts != null && allAccounts.Any())
             {
-                return allAccounts.ToList();
+                
+                var accounts =  allAccounts.ToList();
+                accounts.ForEach( x => x.CustomerNo =  x.customer?.CustomerNo ?? 0);
+                return accounts;
             }
 
             //return new List<Account>();
@@ -39,7 +42,7 @@ namespace DAL
             //get all accounts without customerId
 
         }
-        #endregion 
+        #endregion
 
         #region List<IAccount> GetAllAccount(int acc)
         public List<IAccount> GetAllAccount(int id)

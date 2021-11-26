@@ -1,8 +1,7 @@
 ﻿@model DAL.Entities.Account
 @using Microsoft.AspNetCore.Http
-@{
-    ViewData["Title"] = "Create";
-}
+@using System.Collections
+@{ ViewData["Title"] = "Create"; }
 
 <script src="~/js/site.js"></script>
 
@@ -13,33 +12,39 @@
 @section scripts{
     <script>
         function accountInfo() {
-           var e = document.getElementById("acc");
-           var type = e.options[e.selectedIndex].value;
+            var e = document.getElementById("acc");
+            var type = e.options[e.selectedIndex].value;
             console.log(type);
-
-            
-            if (type == "Savings") {
-                document.getElementById("intrestrate").setAttribute("value", "0.02");
-                document.getElementById("accountType").setAttribute("value", "Savings");
-                document.getElementById("maturitydate").setAttribute("readonly", "readonly");
-                document.getElementById("maturitydate").setAttribute("value", "null");
-            }
-            else {
-                console.log("Unexpeted Error");
-            }
-
 
         }
 
     </script>
 }
 
-
+@{
+    TempData.Keep("CustomerNo");
+}
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="OpenAccount">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label class="control-label">Customer</label>
+                @if (!string.IsNullOrEmpty(ViewBag.CustomerName))
+                {
+                    <label>@ViewBag.CustomerName</label>
+                    @Html.HiddenFor(m => m.CustomerNo )
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.CustomerNo, new SelectList((IEnumerable)ViewBag.CustList, "Value", "Text", Model.CustomerNo), new { @class = "form-control" })
+
+                }
+
+            </div>
+
             <div class="form-group">
                 <label asp-for="Balance" class="control-label"></label>
                 <input asp-for="Balance" class="form-control" />
@@ -49,17 +54,12 @@
                 <label asp-for="AccountType" class="control-label"></label>
 
 
-                <input id="accountType" type="hidden" asp-for="AccountType" value ="Savings" />
-                
+                <input id="accountType" type="hidden" asp-for="AccountType" value="Savings" />
 
-                <select id="acc" style="background-color: dimgrey;" name="account-type"  onchange="accountInfo()">
+
+                <select id="acc" style="background-color: dimgrey;" name="account-type" onchange="accountInfo()">
                     <option value="Savings" selected="selected">Savings</option>
-                    </select>
-            
-
-
-
-
+                </select>
                 <span asp-validation-for="AccountType" class="text-danger"></span>
             </div>
             @*<div class="form-group">
@@ -67,7 +67,7 @@
                     <select asp-for="CustomerNo" class ="form-control" asp-items="ViewBag.CustomerNo"></select>
                 </div>*@
 
-                <input type="hidden" asp-for="CustomerNo" value="@Context.Session.GetString("CustomerNo")" >
+            <input type="hidden" asp-for="CustomerNo" value="@Context.Session.GetString("CustomerNo")">
 
 
 
@@ -79,10 +79,10 @@
                     </label>
                 </div>
             </div>
-            
+
             <div class="form-group">
                 <label asp-for="Interestrate" class="control-label"></label>
-                <input asp-for="Interestrate" id="intrestrate"  style="background-color: dimgrey;" value="0.02"  readonly="readonly" class="form-control" />
+                <input asp-for="Interestrate" id="intrestrate" style="background-color: dimgrey;" value="0.02" readonly="readonly" class="form-control" />
                 <span asp-validation-for="Interestrate" class="text-danger"></span>
             </div>
             <div class="form-group">

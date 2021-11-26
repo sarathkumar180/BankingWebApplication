@@ -37,7 +37,7 @@ CREATE TABLE [dbo].[Account](
 	[AccountType] [nvarchar](max) NULL,
 	[CustomerId] [int] NOT NULL,
 	[AccountStatus] [bit] NOT NULL,	
-	[Interestrate] [float] NOT NULL,
+	[Interestrate] [decimal](18, 2) NOT NULL,
  CONSTRAINT [PK_Account] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

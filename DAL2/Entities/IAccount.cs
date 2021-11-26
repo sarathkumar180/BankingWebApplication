@@ -1,4 +1,6 @@
-﻿namespace DAL.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DAL.Entities
 {
     public interface IAccount
     {
@@ -11,10 +13,11 @@
         decimal Balance { get; set; }
         bool AccountStatus { get; set; }
 
+        [NotMapped]
         int CustomerNo { get; set; }
         //Customer customer { get; set; } // account belong to 1 customer
         decimal Interestrate { get; set; }
-
+        int CustomerId { get; set; }
         Customer customer { get; set; }
 
      

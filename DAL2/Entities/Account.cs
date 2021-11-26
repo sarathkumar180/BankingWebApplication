@@ -23,14 +23,15 @@ namespace DAL.Entities
         public int AccountNo { get; set; }
        
         public string AccountType { get; set; }
+        [NotMapped]
         public int CustomerNo { get; set; }
-
+        public int CustomerId { get; set; }
         public bool AccountStatus { get; set; }
 
         public Customer customer { get; set; }
 
         //public List<Transaction> transactions { get; set; }
-
+        [NotMapped]
         public bool IsTransfer;
 
 
@@ -39,8 +40,9 @@ namespace DAL.Entities
         
         public decimal Interestrate { get; set; }
 
+        [NotMapped]
         public int FromAccountno;
-
+        [NotMapped]
         public int ToAccountno;
 
 

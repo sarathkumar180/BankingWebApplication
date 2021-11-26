@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankingWebApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,27 +21,48 @@ namespace BankingWebApplication.Controllers
         static IAccount td;
         private readonly ApplicationDbContext _context;
 
-       AccountBL accountbl = new AccountBL();
+        AccountBL accountbl = new AccountBL();
+        CustomerBL customerBl = new CustomerBL();
 
         public AccountsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Accounts
-        public async Task<IActionResult> Index()
+        // GET: Accounts/{Customer No}
+        public async Task<IActionResult> Index(int? id)
         {
-            
+            string header = "All Accounts";
+            if (id != null)
+            {
+                var customer = customerBl.GetCustomerFromCustomerNo(id.Value, _context);
+                if (customer != null)
+                {
+                    header = $"Accounts : {customer.CustomerNo} / {customer.FirstName} {customer.LastName}";
+                    TempData["CustomerNo"] = id;
+                }
+            }
+            else
+            {
+                TempData["CustomerNo"] = null;
+            }
+
+            TempData["Header"] = header;
             if (HttpContext.Session.GetString("CustomerNo") != null)
             {
-                var customers = accountbl.GetAllAccount(_context);
-                return View(customers);
+                var accounts = accountbl.GetAllAccount(_context);
+                if (id != null && accounts != null)
+                {
+                    accounts = accounts.Where(x => x.CustomerNo == id);
+
+                }
+                return View(accounts);
             }
             else
             {
                 return RedirectToAction("Login", "Customers");
             }
-            
+
         }
 
         // GET: Accounts/Details/5
@@ -61,11 +84,31 @@ namespace BankingWebApplication.Controllers
             return View(account);
         }
 
-        // GET: Accounts/Create
+        // GET: Accounts/Create/{customerNo}
         public IActionResult OpenAccount()
         {
-            ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "UserName");
-            return View();
+            var id = TempData["CustomerNo"];
+            TempData.Keep("CustomerNo");
+            var custList = GetAllCustomers()?.AsEnumerable();
+            string customerName = null;
+            Account acc = new Account();
+            acc.Interestrate = 0.02m;
+            acc.AccountStatus = true;
+            acc.Balance = 500.00m;
+            if (id != null && custList != null)
+            {
+                var customer = custList.FirstOrDefault(w => w.Value == id.ToString());
+                if (customer != null)
+                {
+                    customerName = customer.Text;
+                    acc.CustomerNo =int.Parse(customer.Value);
+                }
+            }
+
+            ViewBag.CustomerName = customerName;
+            ViewBag.CustList = custList;
+            
+            return View(acc);
         }
 
         // POST: Accounts/Create
@@ -75,32 +118,36 @@ namespace BankingWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult OpenAccount([Bind("Balance,AccountNo,AccountType,CustomerNo,AccountStatus,Interestrate")] Account account)
         {
-
+            var customerNo = TempData["CustomerNo"];
             if (ModelState.IsValid)
             {
                 account.AccountNo = accountbl.GenerateAccountno();
 
                 if (account.AccountType == "Savings")
                 {
-
+                    var customer = customerBl.GetCustomerFromCustomerNo(account.CustomerNo, _context);
+                    if (customer == null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
                     ca = new SavingsAccount()
                     {
                         AccountNo = accountbl.GenerateAccountno(),
-                      
+                        CustomerId = customer.Id,
                         CustomerNo = account.CustomerNo,
                         Balance = account.Balance,
                         AccountStatus = accountbl.GetAccountStatus(),
                         AccountType = account.AccountType,
-                       
+
                     };
-                 
+
                     ca.Interestrate = ca.GetIntrestrate();
                     accountbl.OpenAccount(ca, _context);
 
                 }
 
-                return RedirectToAction(nameof(Index));
-            
+                return RedirectToAction(nameof(Index), new {id = customerNo});
+
             }
             //ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerNo);
             return View(account);
@@ -159,7 +206,7 @@ namespace BankingWebApplication.Controllers
             return View(account);
         }
 
-       private bool AccountExists(int id)
+        private bool AccountExists(int id)
         {
             return _context.Account.Any(e => e.AccountNo == id);
         }
@@ -169,12 +216,12 @@ namespace BankingWebApplication.Controllers
             IAccount acc = _context.Account.Find(id);
 
 
-       
+
             return View(acc);
         }
 
         [HttpPost]
-        
+
         public IActionResult Deposit(int? id, decimal amount)
         {
 
@@ -183,13 +230,13 @@ namespace BankingWebApplication.Controllers
                 return NotFound();
             }
 
-            IAccount acc = _context.Account.FirstOrDefault(a => a.AccountNo == id) ;// get account info 
+            IAccount acc = _context.Account.FirstOrDefault(a => a.AccountNo == id);// get account info 
 
             accountbl.Deposit(acc, amount, _context); // calling businesslayer
 
 
             return RedirectToAction("Index", "Accounts"); // redirect link to index
-    
+
         }
 
 
@@ -278,9 +325,9 @@ namespace BankingWebApplication.Controllers
                 return RedirectToAction("Index", "Accounts"); // redirect link to index
             }//end else
         }
-        
-        
-        public  IActionResult TransactionList(int? id)
+
+
+        public IActionResult TransactionList(int? id)
         {
             if (id == null)
             {
@@ -296,33 +343,50 @@ namespace BankingWebApplication.Controllers
             }
         }
 
-       
+
         public IActionResult TransactionRange(int? id)
         {
 
             var acc = _context.Account.Find(id);
-       
-                return View(acc);
-            
+
+            return View(acc);
+
 
         }
 
         [HttpPost]
         public IActionResult TransactionView(int id, DateTime startTime, DateTime endTime)
         {
-            
+
 
             var account = _context.Account.Where(x => x.AccountNo == id).FirstOrDefault();
 
             var list = _context.Transaction
-                .Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo &&  x.Time > startTime && x.Time <= endTime);
-           
+                .Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo && x.Time > startTime && x.Time <= endTime);
 
-                return View(list);
-            
-        
+
+            return View(list);
+
+
 
         }
+
+        private List<SelectListItem> GetAllCustomers()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            var allCustomers = customerBl.GetAllCustomer(_context);
+
+            if (allCustomers.Any())
+            {
+                foreach (var cust in allCustomers)
+                {
+                    list.Add(new SelectListItem { Text = cust.FirstName + " " + cust.LastName, Value = cust.CustomerNo.ToString() });
+                }
+            }
+
+            return list;
+        }
+
 
 
 

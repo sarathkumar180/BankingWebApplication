@@ -31,7 +31,12 @@ namespace BusinessLayer
             return accountdal.GetAllAccount(id);
         }
 
-       public void OpenAccount(IAccount account, ApplicationDbContext _context)
+        public List<IAccount> GetAllAccountForCustomer(int customerNo, ApplicationDbContext _context)
+        {
+            return accountdal.GetAllAccount(customerNo);
+        }
+
+        public void OpenAccount(IAccount account, ApplicationDbContext _context)
         {
             accountdal.OpenAccount(account, _context);
         }
