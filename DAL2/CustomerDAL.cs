@@ -75,12 +75,10 @@ namespace DAL
             try
             {
 
-                //customers = (from c in context.Customer
-                //    join crm in context.UserRolesMapping on c.Id equals crm.Id
-                //    where crm.RoleId == 3 //Ignore admin and Teller users
-                //    select c).ToList();
-
-                customers = context.Customer.ToList();
+                customers = (from c in context.Customer
+                    join crm in context.UserRolesMapping on c.Id equals crm.CustomerId
+                    where crm.RoleId == 3 //Ignore admin and Teller users
+                    select c).ToList();
 
                 return customers;
             }
@@ -150,7 +148,8 @@ namespace DAL
                     Email = c.Email,
                     FirstName = c.FirstName,
                     LastName = c.LastName,
-                    CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer
+                    CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer,
+                    Password = c.Password
                 }).FirstOrDefault();
 
             return userinfo;

@@ -128,7 +128,7 @@ namespace DAL.Entities
             {
                 if (!IsTransfer)
                 {
-                    //Transaction.CreateTransaction(account, account, amount, "Withdraw");
+                    Transaction.CreateTransaction(acc, acc, amount, "Withdraw");
                 }
                 acc.Balance -= amount;
                 status = true;
@@ -152,7 +152,7 @@ namespace DAL.Entities
                 acc.Balance += amount;
                 if (!IsTransfer)
                 {
-                    //Transaction.CreateTransaction(acc, acc, amount, "Deposit");
+                    Transaction.CreateTransaction(acc, acc, amount, "Deposit");
                 }
                 status = true;
             }

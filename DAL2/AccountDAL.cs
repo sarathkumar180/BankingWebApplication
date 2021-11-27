@@ -238,7 +238,7 @@ namespace DAL
 
             IAccount ca = new SavingsAccount();
             
-            Account acc = _context.Account.Find(accountno);
+            Account acc = _context.Account.FirstOrDefault(x => x.AccountNo == accountno);
 
             if(acc.AccountType == "Savings")
             {
@@ -253,17 +253,18 @@ namespace DAL
 
         #region List<Transaction> GetTransaction(int accountno)
 
-        public List<Transaction> GetTransaction(int accountno)
+        public List<Transaction> GetTransaction(int accountno, ApplicationDbContext _context)
         {
-            List<Transaction> tempTrans = new List<Transaction>();
-            foreach(var tran in Transaction.transactions)
+            try
             {
-                if(tran.Accountno == accountno)
-                {
-                    tempTrans.Add(tran);
-                }
+                var transactions = _context.Transaction.Where(x => x.Accountno == accountno);
+                return transactions.ToList();
             }
-            return tempTrans;
+            catch (Exception)
+            {
+                return new List<Transaction>();
+            }
+           
         }
         #endregion
 
@@ -273,35 +274,7 @@ namespace DAL
             return Transaction.CreateTransaction(account, account2, amount, info);
         }
 
-        public void OpenAccount(IAccount account)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CloseAccount(int id, int accountno)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Deposit(IAccount account, double amount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Withdraw(IAccount account, double amount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Transfer(int fromAccountno, int toAccountno, double amount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAccount GetAccount(int accountno)
-        {
-            throw new NotImplementedException();
-        }
+        
         #endregion
 
     }

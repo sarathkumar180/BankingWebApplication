@@ -68,6 +68,7 @@ CREATE TABLE [dbo].[Transaction](
 	[CustomerId] [int] NOT NULL,
 	[TransactionInfo] [nvarchar](max) NULL,
 	[Time] [datetime2](7) NOT NULL,
+	[TransactionType] [varchar(50)] NULL
  CONSTRAINT [PK_Transaction] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

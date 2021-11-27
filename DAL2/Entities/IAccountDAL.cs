@@ -26,7 +26,7 @@ namespace DAL.Entities
 
         Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info,
             ApplicationDbContext _context);
-        List<Transaction> GetTransaction(int accountno);
+        List<Transaction> GetTransaction(int accountno, ApplicationDbContext context);
 
 
 

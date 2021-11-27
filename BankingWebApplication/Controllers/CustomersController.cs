@@ -178,11 +178,21 @@ namespace BankingWebApplication.Controllers
                 ViewBag.UserName = HttpContext.Session.GetString("UserName"); //use to display username for upper right nav 
                 
                 ViewBag.CustomerId = int.Parse((HttpContext.Session.GetString("CustomerNo")));//determine differnt nav view for login and logout
-                //also use CustomerNo to determine if the user is login or not
+                                                                                              //also use CustomerNo to determine if the user is login or not
 
-                return RedirectToAction($"Edit","Customers",new { customerNo = ViewBag.CustomerId });
-               
-                
+                var customer = customerbl.GetCustomerFromCustomerNo(ViewBag.CustomerId, _context);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+
+                //return View($"LoggedInUserEdit", customer);
+
+                return View($"Details", customer);
+
+
+
+
             }
             else
             {

@@ -115,9 +115,9 @@ namespace BusinessLayer
         #endregion
 
         #region List<Transaction> GetTransaction(int accountno)
-        public List<Transaction> GetTransaction(int accountno)
+        public List<Transaction> GetTransaction(int accountno,ApplicationDbContext _context)
         {
-            return accountdal.GetTransaction(accountno);
+            return accountdal.GetTransaction(accountno,_context);
 
         }
         #endregion

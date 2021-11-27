@@ -16,7 +16,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.TransactionNo)
             </th>
-
+            <th>
+                @Html.DisplayNameFor(model => model.TransactionType)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Accountno)
             </th>
@@ -36,6 +38,9 @@
             <tr>
                 <td>
                     @Html.DisplayFor(model => item.TransactionNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.TransactionType)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Accountno)

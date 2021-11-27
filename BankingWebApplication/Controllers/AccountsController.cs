@@ -213,10 +213,12 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Deposit(int? id)
         {
-            IAccount acc = _context.Account.Find(id);
-
-
-
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var acc = accountbl.GetAccount(id.Value, _context);
+            ViewBag.BalanceText = $"Account balance : {acc?.Balance.ToString("C")}";
             return View(acc);
         }
 
@@ -230,7 +232,7 @@ namespace BankingWebApplication.Controllers
                 return NotFound();
             }
 
-            IAccount acc = _context.Account.FirstOrDefault(a => a.AccountNo == id);// get account info 
+            var acc = accountbl.GetAccount(id.Value, _context);
 
             accountbl.Deposit(acc, amount, _context); // calling businesslayer
 
@@ -248,7 +250,8 @@ namespace BankingWebApplication.Controllers
             }
             else
             {
-                IAccount acc = _context.Account.Find(id);
+                var acc = accountbl.GetAccount(id.Value, _context);
+                ViewBag.BalanceText = $"Account balance : {acc?.Balance.ToString("C")}";
                 return View(acc);
 
             }
@@ -265,7 +268,7 @@ namespace BankingWebApplication.Controllers
             else
             {
 
-                IAccount acc = _context.Account.Find(id); // get account info 
+                var acc = accountbl.GetAccount(id.Value, _context);// get account info 
 
                 accountbl.Withdraw(acc, amount, _context); // calling businesslayer
 
@@ -335,9 +338,10 @@ namespace BankingWebApplication.Controllers
             }
             else
             {
-                var account = _context.Account.Where(x => x.AccountNo == id).FirstOrDefault();
+                var account = accountbl.GetAccount(id.Value,_context);
 
-                var list = _context.Transaction.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo).Take(10).OrderByDescending(t => t.Time);
+                var allTxns = accountbl.GetTransaction(account.AccountNo, _context);
+                var list = allTxns.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo).Take(10).OrderByDescending(t => t.Time);
 
                 return View(list);
             }
@@ -346,8 +350,11 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult TransactionRange(int? id)
         {
-
-            var acc = _context.Account.Find(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var acc =  accountbl.GetAccount(id.Value,_context);
 
             return View(acc);
 
@@ -358,11 +365,11 @@ namespace BankingWebApplication.Controllers
         public IActionResult TransactionView(int id, DateTime startTime, DateTime endTime)
         {
 
+            endTime = endTime.AddDays(1);
+            var account = accountbl.GetAccount(id, _context);
 
-            var account = _context.Account.Where(x => x.AccountNo == id).FirstOrDefault();
-
-            var list = _context.Transaction
-                .Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo && x.Time > startTime && x.Time <= endTime);
+            var txnList = accountbl.GetTransaction(account.AccountNo, _context);
+            var list = txnList.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerId && x.Time > startTime && x.Time <= endTime);
 
 
             return View(list);

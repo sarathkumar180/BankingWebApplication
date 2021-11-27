@@ -29,62 +29,105 @@
     <div class="col-md-4">
         <form asp-action="OpenAccount">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <table class="table">
+                <tr>
+                    <td>
+                        <label class="control-label">Customer</label>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(ViewBag.CustomerName))
+                        {
+                            <label>@ViewBag.CustomerName</label>
+                            @Html.HiddenFor(m => m.CustomerNo )
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.CustomerNo, new SelectList((IEnumerable)ViewBag.CustList, "Value", "Text", Model.CustomerNo), new { @class = "form-control" })
+                        }
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <label asp-for="Balance" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="Balance" class="form-control" />
+                        <span asp-validation-for="Balance" class="text-danger"></span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <label asp-for="AccountType" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input id="accountType" type="hidden" asp-for="AccountType" value="Savings" />
 
-            <div class="form-group">
-                <label class="control-label">Customer</label>
-                @if (!string.IsNullOrEmpty(ViewBag.CustomerName))
-                {
-                    <label>@ViewBag.CustomerName</label>
-                    @Html.HiddenFor(m => m.CustomerNo )
-                }
-                else
-                {
-                    @Html.DropDownListFor(m => m.CustomerNo, new SelectList((IEnumerable)ViewBag.CustList, "Value", "Text", Model.CustomerNo), new { @class = "form-control" })
 
-                }
+                        <select id="acc" style="background-color: dimgrey;" name="account-type" onchange="accountInfo()">
+                            <option value="Savings" selected="selected">Savings</option>
+                        </select>
+                        <span asp-validation-for="AccountType" class="text-danger"></span>
+                    </td>
 
-            </div>
+                </tr>
+                
+                <tr>
+                    
+                    <td>
+                        @Html.DisplayNameFor(model => model.AccountStatus)
+                    </td>
+                    <td>
+                        <div class="checkbox">
+                            <label>
+                                <input asp-for="AccountStatus" value="1" checked="checked" disabled="disabled" /> 
+                            </label>
+                        </div>
+                    </td>
 
-            <div class="form-group">
-                <label asp-for="Balance" class="control-label"></label>
-                <input asp-for="Balance" class="form-control" />
-                <span asp-validation-for="Balance" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AccountType" class="control-label"></label>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <label asp-for="Interestrate" class="control-label"></label>
+                    </td>
+                    <td>
+                        <input asp-for="Interestrate" id="intrestrate" style="background-color: dimgrey; color: azure;" value="0.02" readonly="readonly" class="form-control" />
+                        <span asp-validation-for="Interestrate" class="text-danger"></span>
+                    </td>
+                </tr>
+
+            </table>
+            @*<div class="form-group">*@
+                
+                
+
+            @*</div>*@
+
+            @*<div class="form-group">*@
+                
+            @*</div>
+            <div class="form-group">*@
+                
 
 
-                <input id="accountType" type="hidden" asp-for="AccountType" value="Savings" />
-
-
-                <select id="acc" style="background-color: dimgrey;" name="account-type" onchange="accountInfo()">
-                    <option value="Savings" selected="selected">Savings</option>
-                </select>
-                <span asp-validation-for="AccountType" class="text-danger"></span>
-            </div>
-            @*<div class="form-group">
-                    <label asp-for="CustomerNo" class="control-label"></label>
-                    <select asp-for="CustomerNo" class ="form-control" asp-items="ViewBag.CustomerNo"></select>
-                </div>*@
-
+                
+            @*</div>*@
+           
             <input type="hidden" asp-for="CustomerNo" value="@Context.Session.GetString("CustomerNo")">
 
 
 
 
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="AccountStatus" value="1" checked="checked" disabled="disabled" /> @Html.DisplayNameFor(model => model.AccountStatus)
-                    </label>
-                </div>
-            </div>
+            @*<div class="form-group">*@
+                
+            @*</div>*@
 
-            <div class="form-group">
-                <label asp-for="Interestrate" class="control-label"></label>
-                <input asp-for="Interestrate" id="intrestrate" style="background-color: dimgrey;" value="0.02" readonly="readonly" class="form-control" />
-                <span asp-validation-for="Interestrate" class="text-danger"></span>
-            </div>
+            @*<div class="form-group">*@
+                
+                
+            @*</div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>

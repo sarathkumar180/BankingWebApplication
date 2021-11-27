@@ -23,7 +23,7 @@ namespace DAL.Entities
         public string TransactionInfo { get; set; }
 
         public DateTime Time { get; set; }
-       
+        public string TransactionType { get; set; }
        
         public static List<Transaction> transactions = new List<Transaction>();
 
@@ -55,7 +55,7 @@ namespace DAL.Entities
                 TransactionNo = GenerateTransactionNo(),
                 Accountno = accountno,
                 CustomerId = customerId,
-                
+                TransactionType = type,
                 Time = DateTime.Now
             };
 
