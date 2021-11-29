@@ -61,14 +61,15 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo">Accounts</a> |
-                <a asp-action="Edit" asp-route-customerno="@item.CustomerNo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CustomerNo">Details</a> |
+                <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo" style="font-size: medium;font-weight: bold">Accounts</a>
+                <span>&nbsp;| &nbsp; </span>
+                <a asp-action="Edit" asp-route-customerno="@item.CustomerNo" style="font-size: medium;font-weight: bold">Edit</a>
+                <span>&nbsp;| &nbsp; </span>
+                <a asp-action="Details" asp-route-id="@item.CustomerNo" style="font-size: medium;font-weight: bold">Details</a>
                 @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") == "Admin")
                 {
-                    <a asp-action="EditRole" asp-route-customerNo="@item.CustomerNo" asp-route-userName="@item.UserName" asp-route-roleName="@item.CustomerRole" >Edit User Roes</a>
-
-                }
+                    <span>&nbsp;| &nbsp; </span>
+            <a asp-action="EditRole" asp-route-customerNo="@item.CustomerNo" asp-route-userName="@item.UserName" asp-route-roleName="@item.CustomerRole">Edit User Roes</a>}
             </td>
         </tr>
             

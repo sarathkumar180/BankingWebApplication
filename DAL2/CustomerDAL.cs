@@ -243,5 +243,48 @@ namespace DAL
             }
             
         }
+
+        public List<Payee> GetPayeesForCustomerNo(int customerNo, ApplicationDbContext context)
+        {
+            try
+            {
+                var customerId = context.Customer.Where(x => x.CustomerNo == customerNo).Select(x => x.Id).FirstOrDefault();
+                return context.Payee.Where(x => x.CustomerId == customerId).ToList();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public bool AddOrUpdatePayee(Payee model, ApplicationDbContext context)
+        {
+            try
+            {
+                var customerId = context.Customer.Where(x => x.CustomerNo == model.CustomerNo).Select(x => x.Id).FirstOrDefault();
+                if (customerId != 0)
+                {
+                    model.CustomerId = customerId;
+                    if (model.Id > 0)
+                    {
+                        context.Payee.Update(model);
+                    }
+                    else
+                    {
+                        context.Payee.Add(model);
+                    }
+                    context.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
     }
 }

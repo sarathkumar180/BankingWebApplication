@@ -55,5 +55,14 @@ namespace BusinessLayer
             return customerdal.AddOrUpdateUserRole(customerNo, roleId, context);
         }
 
+        public bool AddOrUpdatePayee(Payee model, ApplicationDbContext context)
+        {
+            return customerdal.AddOrUpdatePayee(model, context);
+        }
+
+        public List<Payee> GetPayeesForCustomerNo(int customerNo, ApplicationDbContext context)
+        {
+            return customerdal.GetPayeesForCustomerNo(customerNo, context);
+        }
     }
 }

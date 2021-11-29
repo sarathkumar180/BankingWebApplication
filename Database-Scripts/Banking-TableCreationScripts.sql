@@ -135,7 +135,7 @@ ALTER TABLE [dbo].[UserRolesMapping] CHECK CONSTRAINT [FK_UserRolesMapping_Roles
 GO
 
 
-/****** Object:  Table [dbo].[Payee]    Script Date: 10-11-2021 16:55:45 ******/
+/****** Object:  Table [dbo].[Payee]    Script Date: 29-11-2021 14:40:44 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -144,25 +144,18 @@ GO
 
 CREATE TABLE [dbo].[Payee](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[AccountId] [int] NOT NULL,
 	[CustomerId] [int] NOT NULL,
 	[BankCode] [nvarchar](max) NULL,
 	[IsActive] [bit] NULL,
 	[IsDeleted] [bit] NULL,
 	[CreatedDateTime] [datetime2](7) NOT NULL,
+	[AccountNumber] [int] NOT NULL,
+	[PayeeName] [nvarchar](200) NOT NULL,
  CONSTRAINT [PK_Payee] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Payee]  WITH CHECK ADD  CONSTRAINT [FK_Payee_Account_Id] FOREIGN KEY([AccountId])
-REFERENCES [dbo].[Account] ([Id])
-ON DELETE CASCADE
-GO
-
-ALTER TABLE [dbo].[Payee] CHECK CONSTRAINT [FK_Payee_Account_Id]
 GO
 
 ALTER TABLE [dbo].[Payee]  WITH CHECK ADD  CONSTRAINT [FK_Payee_Customer_Id] FOREIGN KEY([CustomerId])
@@ -171,7 +164,6 @@ GO
 
 ALTER TABLE [dbo].[Payee] CHECK CONSTRAINT [FK_Payee_Customer_Id]
 GO
-
 
 /****** Object:  Table [dbo].[PaymentHistory]    Script Date: 10-11-2021 17:11:10 ******/
 SET ANSI_NULLS ON

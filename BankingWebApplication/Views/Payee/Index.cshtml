@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Http
+@using DAL.Enum
+@using Nancy.Session
+@model IEnumerable<DAL.Entities.Payee>
+
+@{ ViewData["Title"] = "Payees"; }
+
+<h2>@TempData["Header"]</h2>
+<p>
+    
+    <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")" 
+       asp-route-payeeId="0" asp-route-newPayee ="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
+    </p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Select
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PayeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccountNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BankCode)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th>
+            Amount To Pay
+        </th>
+        <th>
+
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+
+        @*@if (Model != null && Model.Any())
+            {*@
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.IsChecked)
+                </td>
+                <td>
+                    <a asp-action="Payee" asp-route-customerNo="@item.CustomerNo" asp-route-payeeId="@item.Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => item.PayeeName)</a>
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BankCode)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => item.IsActive, new {@onclick = "return false"})
+                </td>
+
+                <td>
+                    @Html.TextBoxFor(modelItem => item.AmountToPay)
+                </td>
+            </tr>}
+        @*}
+            else
+            {
+
+                    <tr>
+                        <td> No Accounts found</td>
+                    </tr>
+
+            }*@
+    </tbody>
+</table>

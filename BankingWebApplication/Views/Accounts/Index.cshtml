@@ -8,7 +8,7 @@
 <p>
     @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
     {
-        <a asp-action="OpenAccount">Add New Account</a>
+        <a asp-action="OpenAccount" style="font-size: medium;font-weight: bold">Add New Account</a>
     }
     @{ TempData.Keep("CustomerNo"); }
 </p>
@@ -64,16 +64,25 @@
         @Html.DisplayFor(modelItem => item.Interestrate)
     </td>
     <td>
-        @Html.CheckBoxFor(modelItem => item.AccountStatus, new { disabled = "disabled" })
+        @Html.CheckBoxFor(modelItem => item.AccountStatus, new { @onclick = "return false" });
     </td>
 
     <td>
 
         @if (item.AccountStatus)
         {
-                    <a asp-action="Deposit" asp-route-id="@item.AccountNo">Deposit</a> <span>|</span>
-                    <a asp-action="Withdraw" asp-route-id="@item.AccountNo">Withdraw</a> <span>|</span>
-                                        <a asp-action="TransactionRange" asp-route-id="@item.AccountNo">Transactions</a> <span>|</span>}
+            @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+            {
+                <a asp-action="Deposit" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Deposit</a>
+                <span>&nbsp;| &nbsp; </span>
+                <a asp-action="Withdraw" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Withdraw</a>
+                <span>&nbsp;| &nbsp; </span>
+            }
+            <a asp-action="TransactionRange" asp-route-id="@item.AccountNo" style="        font-size: medium;
+        font-weight: bold
+">View Transactions</a>
+
+        }
     </td>
 </tr>
        }

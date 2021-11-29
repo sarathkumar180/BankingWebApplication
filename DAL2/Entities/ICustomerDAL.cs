@@ -12,8 +12,8 @@ namespace DAL.Entities
         bool UpdateCustomer(Customer customer, ApplicationDbContext _context);
 
         bool AddOrUpdateUserRole(int customerNo, int roleId, ApplicationDbContext context);
-
-
+        bool AddOrUpdatePayee(Payee model, ApplicationDbContext context);
+        List<Payee> GetPayeesForCustomerNo(int customerNo, ApplicationDbContext context);
 
     }
 }

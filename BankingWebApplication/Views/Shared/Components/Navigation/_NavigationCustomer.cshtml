@@ -20,9 +20,9 @@
             <ul class="nav navbar-nav">
                 <li><a asp-area="" asp-controller="Accounts" asp-action="Index">Accounts</a></li>
                 <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                @if (Context.Session.GetString("UserRole") != null)
+                @if (Context.Session.GetString("CustomerNo") != null && Context.Session.GetString("UserRole") != null)
                 {
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Payee</a></li>
+                    <li><a asp-area="" asp-controller="Payee" asp-action="Index">Payee</a></li>
                 }
             </ul>
             <partial name="_LoginPartial" />
