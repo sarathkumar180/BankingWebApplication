@@ -1,81 +1,121 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using DAL.Enum
 @using Nancy.Session
-@model IEnumerable<DAL.Entities.Payee>
+@model IList<DAL.Entities.Payee>
 
 @{ ViewData["Title"] = "Payees"; }
 
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    function EnableOrDisablePayButton() {
+        //Reference the Table.
+        var grid = document.getElementById("tablePayee");
+
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByClassName("Selected");
+
+        document.getElementById("btnPay").disabled = true;
+        //Loop through the CheckBoxes.
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                document.getElementById("btnPay").disabled = false;
+                break;
+            }
+        }
+
+        return false;
+    }
+
+    $(document).ready(function () {
+
+        [].forEach.call(document.querySelectorAll('.Selected[type="checkbox"]'),
+            function (elem) {
+                elem.addEventListener('change',
+                    function () {
+                        if (this.checked) {
+                            this.parentNode.parentNode.querySelector('.Selected[type="text"]').disabled = false;
+                        } else {
+                            this.parentNode.parentNode.querySelector('.Selected[type="text"]').value = 0.00;
+                            this.parentNode.parentNode.querySelector('.Selected[type="text"]').disabled = true;
+
+                        }
+                        EnableOrDisablePayButton();
+
+                    });
+            });
+    });
+
+</script>
+
 <h2>@TempData["Header"]</h2>
-<p>
-    
-    <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")" 
-       asp-route-payeeId="0" asp-route-newPayee ="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
+
+<form asp-action="Index" method="post">
+    <p>
+
+        <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")"
+           asp-route-payeeId="0" asp-route-newPayee="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
     </p>
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            Select
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PayeeName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AccountNumber)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.BankCode)
-        </th>
-
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            Amount To Pay
-        </th>
-        <th>
-
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-
-        @*@if (Model != null && Model.Any())
-            {*@
-        @foreach (var item in Model)
-        {
-
+    <table id="tablePayee" class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.CheckBoxFor(modelItem => item.IsChecked)
-                </td>
-                <td>
-                    <a asp-action="Payee" asp-route-customerNo="@item.CustomerNo" asp-route-payeeId="@item.Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => item.PayeeName)</a>
-                </td>
+                <th>
+                    Select to Pay
+                </th>
+                <th>
+                    PayeeName
+                </th>
+                <th>
+                    @Html.DisplayName("AccountNumber")
+                </th>
+                <th>
+                    @Html.DisplayName("BankCode")
+                </th>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.AccountNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BankCode)
-                </td>
-                <td>
-                    @Html.CheckBoxFor(modelItem => item.IsActive, new {@onclick = "return false"})
-                </td>
+                <th>
+                    @Html.DisplayName("IsActive")
+                </th>
+                <th>
+                    Amount To Pay
+                </th>
+                <th>
 
-                <td>
-                    @Html.TextBoxFor(modelItem => item.AmountToPay)
-                </td>
-            </tr>}
-        @*}
-            else
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (int x = 0; x < Model.Count(); x++)
             {
+                <tr>
+                    <td>
+                        @Html.CheckBoxFor(modelItem => Model[x].IsChecked, new { @class = "Selected" })
+                    </td>
+                    <td>
+                        <a asp-action="Payee" asp-route-customerNo="@Model[x].CustomerNo" asp-route-payeeId="@Model[x].Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => Model[x].PayeeName)</a>
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(modelItem => Model[x].AccountNumber, new { disabled = "disabled" })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[x].BankCode)
+                    </td>
+                    <td>
+                        @Html.CheckBoxFor(modelItem => Model[x].IsActive, new { @onclick = "return false" })
+                    </td>
 
-                    <tr>
-                        <td> No Accounts found</td>
-                    </tr>
+                    <td>
+                        @Html.TextBoxFor(modelItem => Model[x].AmountToPay, "{0:n2}", new { @class = "Selected", disabled = "disabled" })
+                    </td>
+                </tr>
+}
 
-            }*@
-    </tbody>
-</table>
+
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <input id="btnPay" type="submit" value="Pay" class="btn btn-default" disabled="disabled" />
+    </div>
+
+</form>

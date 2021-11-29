@@ -35,6 +35,20 @@ namespace BankingWebApplication.Controllers
             return View("Error", new ErrorViewModel { RequestId = "Unauthorized Request.Authorization Error" });
         }
 
+        [HttpPost]
+        public IActionResult Index(IEnumerable<Payee> model)
+        {
+            if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString() &&
+                !string.IsNullOrEmpty(HttpContext.Session.GetString("CustomerNo")))
+            {
+                var payees = customerbl.GetPayeesForCustomerNo(int.Parse(HttpContext.Session.GetString("CustomerNo")), _context);
+                payees?.ForEach(s => s.CustomerNo = int.Parse(HttpContext.Session.GetString("CustomerNo")));
+                return View(payees);
+            }
+
+            return View("Error", new ErrorViewModel { RequestId = "Unauthorized Request.Authorization Error" });
+        }
+
         public IActionResult Payee(int customerNo, int payeeId, bool newPayee)
         {
             var loggedInUser = HttpContext.Session.GetString("CustomerNo");
