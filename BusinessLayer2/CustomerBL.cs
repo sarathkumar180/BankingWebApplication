@@ -50,5 +50,10 @@ namespace BusinessLayer
             return customerdal.GetCustomerFromCustomerNo(customerNo, context);
         }
 
+        public bool AddOrUpdateUserRole(int customerNo, int roleId, ApplicationDbContext context)
+        {
+            return customerdal.AddOrUpdateUserRole(customerNo, roleId, context);
+        }
+
     }
 }

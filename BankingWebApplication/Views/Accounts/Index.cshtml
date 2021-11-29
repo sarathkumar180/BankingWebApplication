@@ -1,13 +1,16 @@
-﻿@model IEnumerable<DAL.Entities.Account>
+﻿@using Microsoft.AspNetCore.Http
+@using DAL.Enum
+@model IEnumerable<DAL.Entities.Account>
 
 @{ ViewData["Title"] = "Accounts"; }
 
 <h2>@TempData["Header"]</h2>
 <p>
-    <a asp-action="OpenAccount">Add New Account</a>
-    @{
-        TempData.Keep("CustomerNo");
+    @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+    {
+        <a asp-action="OpenAccount">Add New Account</a>
     }
+    @{ TempData.Keep("CustomerNo"); }
 </p>
 <table class="table">
     <thead>

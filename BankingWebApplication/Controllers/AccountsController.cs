@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using DAL;
 using DAL.Entities;
 using BusinessLayer;
+using DAL.Enum;
 using Microsoft.AspNetCore.Http;
 
 namespace BankingWebApplication.Controllers
@@ -32,25 +33,33 @@ namespace BankingWebApplication.Controllers
         // GET: Accounts/{Customer No}
         public async Task<IActionResult> Index(int? id)
         {
-            string header = "All Accounts";
-            if (id != null)
-            {
-                var customer = customerBl.GetCustomerFromCustomerNo(id.Value, _context);
-                if (customer != null)
-                {
-                    header = $"Accounts : {customer.CustomerNo} / {customer.FirstName} {customer.LastName}";
-                    TempData["CustomerNo"] = id;
-                }
-            }
-            else
-            {
-                TempData["CustomerNo"] = null;
-            }
-
-            TempData["Header"] = header;
             if (HttpContext.Session.GetString("CustomerNo") != null)
             {
+                string header = "All Accounts";
+                if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+                {
+                    id = int.Parse(HttpContext.Session.GetString("CustomerNo"));
+                }
+                if (id != null)
+                {
+                    var customer = customerBl.GetCustomerFromCustomerNo(id.Value, _context);
+                    if (customer != null)
+                    {
+                        header = $"Accounts : {customer.CustomerNo} / {customer.FirstName} {customer.LastName}";
+                        TempData["CustomerNo"] = id;
+                    }
+                }
+                else
+                {
+                    TempData["CustomerNo"] = null;
+                }
+
+                TempData["Header"] = header;
+
+               
                 var accounts = accountbl.GetAllAccount(_context);
+
+                
                 if (id != null && accounts != null)
                 {
                     accounts = accounts.Where(x => x.CustomerNo == id);
@@ -101,13 +110,13 @@ namespace BankingWebApplication.Controllers
                 if (customer != null)
                 {
                     customerName = customer.Text;
-                    acc.CustomerNo =int.Parse(customer.Value);
+                    acc.CustomerNo = int.Parse(customer.Value);
                 }
             }
 
             ViewBag.CustomerName = customerName;
             ViewBag.CustList = custList;
-            
+
             return View(acc);
         }
 
@@ -146,7 +155,7 @@ namespace BankingWebApplication.Controllers
 
                 }
 
-                return RedirectToAction(nameof(Index), new {id = customerNo});
+                return RedirectToAction(nameof(Index), new { id = customerNo });
 
             }
             //ViewData["CustomerNo"] = new SelectList(_context.Customer, "CustomerNo", "Email", account.CustomerNo);
@@ -338,7 +347,7 @@ namespace BankingWebApplication.Controllers
             }
             else
             {
-                var account = accountbl.GetAccount(id.Value,_context);
+                var account = accountbl.GetAccount(id.Value, _context);
 
                 var allTxns = accountbl.GetTransaction(account.AccountNo, _context);
                 var list = allTxns.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo).Take(10).OrderByDescending(t => t.Time);
@@ -354,7 +363,7 @@ namespace BankingWebApplication.Controllers
             {
                 return NotFound();
             }
-            var acc =  accountbl.GetAccount(id.Value,_context);
+            var acc = accountbl.GetAccount(id.Value, _context);
 
             return View(acc);
 

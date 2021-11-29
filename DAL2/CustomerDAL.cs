@@ -74,13 +74,23 @@ namespace DAL
         {
             try
             {
+                var userInfo = (from c in context.Customer
+                    join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                    from urMapping in urm.DefaultIfEmpty()
+                    select new Customer()
+                    {
+                        Id = c.Id,
+                        UserName = c.UserName,
+                        CustomerNo = c.CustomerNo,
+                        Address = c.Address,
+                        PhoneNumber = c.PhoneNumber,
+                        Email = c.Email,
+                        FirstName = c.FirstName,
+                        LastName = c.LastName,
+                        CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
+                        }).ToList();
 
-                customers = (from c in context.Customer
-                    join crm in context.UserRolesMapping on c.Id equals crm.CustomerId
-                    where crm.RoleId == 3 //Ignore admin and Teller users
-                    select c).ToList();
-
-                return customers;
+                return userInfo.Where(x =>x.CustomerRole !=  "Admin").ToList();
             }
             catch (Exception e)
             {
@@ -88,6 +98,33 @@ namespace DAL
                 return customers;
             }
 
+        }
+
+        public List<UserRolesMapping> GetAllCustomersWithRoles(ApplicationDbContext context)
+        {
+            try
+            {
+
+                var returnList = (from c in context.Customer
+                    join crm in context.UserRolesMapping on c.Id equals crm.CustomerId
+                    where crm.RoleId != 3 //Ignore admin and Teller users
+                    select new UserRolesMapping()
+                    {
+                        Id = crm.Id,
+                        RoleId = crm.RoleId,
+                        CustomerId = crm.CustomerId,
+                        CustomerName = c.FirstName + " " + c.LastName,
+                        CustomerNo = c.CustomerNo,
+                        RoleName = crm.RoleId == 0 ? string.Empty : ((RoleEnum)crm.RoleId).ToString()
+                    }).ToList();
+
+                return returnList;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public int GenerateCustomerNo(ApplicationDbContext context)
@@ -125,7 +162,7 @@ namespace DAL
                                 Email = c.Email,
                                 FirstName = c.FirstName,
                                 LastName = c.LastName,
-                                CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer
+                                CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
                             }).FirstOrDefault();
 
             return userinfo;
@@ -148,7 +185,7 @@ namespace DAL
                     Email = c.Email,
                     FirstName = c.FirstName,
                     LastName = c.LastName,
-                    CustomerRole = urMapping != null ? (RoleEnum)urMapping.RoleId : RoleEnum.Customer,
+                    CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
                     Password = c.Password
                 }).FirstOrDefault();
 
@@ -170,10 +207,41 @@ namespace DAL
                     Email = c.Email,
                     FirstName = c.FirstName,
                     LastName = c.LastName,
-                    CustomerRole = m != null ? (RoleEnum)m.RoleId : RoleEnum.Customer
+                    CustomerRole = m != null ? ((RoleEnum)m.RoleId).ToString() : string.Empty
                 }).AsEnumerable();
 
             return allCUstomers;
+        }
+
+        public bool AddOrUpdateUserRole(int customerNo, int roleId, ApplicationDbContext context)
+        {
+            try
+            {
+                var customerId = context.Customer.Where(x => x.CustomerNo == customerNo).Select(x => x.Id).FirstOrDefault();
+                var userRole = context.UserRolesMapping
+                    .FirstOrDefault(x => x.CustomerId == customerId);
+                if (userRole == null)
+                {
+                    userRole = new UserRolesMapping();
+                    userRole.RoleId = roleId;
+                    userRole.CustomerId = customerId;
+                    context.UserRolesMapping.Add(userRole);
+                }
+                else
+                {
+                    userRole.RoleId = roleId;
+                    userRole.CustomerId = customerId;
+                    context.UserRolesMapping.Update(userRole);
+                }
+
+                context.SaveChanges();
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            
         }
     }
 }

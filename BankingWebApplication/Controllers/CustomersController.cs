@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankingWebApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.Entities;
 using Microsoft.AspNetCore.Http;
 using BusinessLayer;
 using DAL;
+using DAL.Enum;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BankingWebApplication.Controllers
 {
@@ -27,6 +31,10 @@ namespace BankingWebApplication.Controllers
         public async Task<IActionResult> Index()
         {
             IEnumerable<Customer> customers = customerbl.GetAllCustomer(_context);
+            if (HttpContext.Session.GetString("UserRole") == RoleEnum.Teller.ToString())
+            {
+                customers = customers.Where(x => x.CustomerRole != RoleEnum.Teller.ToString() && !string.IsNullOrEmpty(x.CustomerRole));
+            }
             return View(customers);
         }
 
@@ -78,14 +86,14 @@ namespace BankingWebApplication.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? customerno)
         {
-            if (id == null)
+            if (customerno == null)
             {
                 return NotFound();
             }
 
-            var customer = customerbl.GetCustomerFromCustomerNo(id.Value,_context);
+            var customer = customerbl.GetCustomerFromCustomerNo(customerno.Value,_context);
             if (customer == null)
             {
                 return NotFound();
@@ -98,7 +106,7 @@ namespace BankingWebApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int CustomerNo, [Bind("CustomerNo,UserName,Password,FirstName,LastName,PhoneNumber,Email,Address")] Customer customer)
+        public async Task<IActionResult> Edit(int CustomerNo, [Bind("Id,CustomerNo,UserName,Password,FirstName,LastName,PhoneNumber,Email,Address")] Customer customer)
         {
             if (CustomerNo != customer.CustomerNo)
             {
@@ -109,8 +117,19 @@ namespace BankingWebApplication.Controllers
             if (ModelState.IsValid)
             {
                 bool success = customerbl.UpdateCustomer(customer, _context);
-                if(success)
-                    return RedirectToAction("Index","Home");
+                if (success)
+                {
+                    var userRole = HttpContext.Session.GetString("UserRole");
+                    if (string.IsNullOrEmpty(userRole) || userRole == RoleEnum.Customer.ToString())
+                    {
+                        return RedirectToAction("Index", "Accounts");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Customers");
+                    }
+                    
+                }
                 else
                 {
                     ModelState.AddModelError(nameof(customer.CustomerNo), "Failed to update!");
@@ -118,6 +137,39 @@ namespace BankingWebApplication.Controllers
                 }
             }
             return View(customer);
+        }
+
+
+        public IActionResult EditRole(int customerNo, string userName, string roleName)
+        {
+            List<SelectList> roles = new List<SelectList>();
+           roles.Add(new SelectList(RoleEnum.Teller.ToString(), RoleEnum.Teller.ToString()));
+           roles.Add(new SelectList(RoleEnum.Customer.ToString(), RoleEnum.Customer.ToString()));
+           EditRoleViewModel model = new EditRoleViewModel();
+           model.RolesList = roles;
+           model.SelectedRole = string.IsNullOrEmpty(roleName) ? RoleEnum.Customer.ToString() : roleName;
+           model.CustomerNo = customerNo;
+           model.UserName = userName;
+           return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditRole(EditRoleViewModel model)
+        {
+            if (model != null)
+            {
+                Enum.TryParse(model.SelectedRole, out RoleEnum role);
+                bool success = customerbl.AddOrUpdateUserRole(model.CustomerNo, (int) role, _context);
+                if(success)
+                    return RedirectToAction("Index", "Customers");
+                return View("Error", new ErrorViewModel { RequestId = "Update User Role" });
+            }
+            else
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Update User Role" });
+            }
+
+            
         }
 
         private bool CustomerExists(int id)
@@ -144,11 +196,11 @@ namespace BankingWebApplication.Controllers
                 //user found in the database
                 ViewBag.LoginSucceed = "Succeed!! Welcome.";
                 HttpContext.Session.SetString("CustomerNo", userinfo.CustomerNo.ToString());//set CustomerNo value use in Welcome Action
-                HttpContext.Session.SetString("UserName", userinfo.UserName.ToString()); //set UserName value use in Welcome Action
-                HttpContext.Session.SetString("UserRole", userinfo.CustomerRole.ToString()); //set UserName value use in Welcome Action
+                HttpContext.Session.SetString("UserName", userinfo.UserName); //set UserName value use in Welcome Action
+                HttpContext.Session.SetString("UserRole", userinfo.CustomerRole); //set UserName value use in Welcome Action
 
 
-                return RedirectToAction("index", "Home");
+                return RedirectToAction("index", "Accounts");
 
             }
             else

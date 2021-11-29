@@ -1,12 +1,11 @@
-﻿@model IEnumerable<DAL.Entities.Customer>
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<DAL.Entities.Customer>
 
 @{
     ViewData["Title"] = "Customers";
 }
 
 <h2>Customers</h2>
-
-
 <table class="table">
     <thead>
         <tr>
@@ -14,7 +13,7 @@
                 @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
+                @Html.DisplayNameFor(model => model.CustomerRole)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
@@ -44,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Password)
+                @Html.DisplayFor(modelItem => item.CustomerRole)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
@@ -63,8 +62,13 @@
             </td>
             <td>
                 <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo">Accounts</a> |
-                <a asp-action="Edit" asp-route-id="@item.CustomerNo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CustomerNo">Details</a>
+                <a asp-action="Edit" asp-route-customerno="@item.CustomerNo">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CustomerNo">Details</a> |
+                @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") == "Admin")
+                {
+                    <a asp-action="EditRole" asp-route-customerNo="@item.CustomerNo" asp-route-userName="@item.UserName" asp-route-roleName="@item.CustomerRole" >Edit User Roes</a>
+
+                }
             </td>
         </tr>
             

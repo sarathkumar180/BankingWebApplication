@@ -39,7 +39,7 @@ namespace DAL.Entities
         public string PhoneNumber { get; set; }
 
         [NotMapped]
-        public RoleEnum CustomerRole { get; set; }
+        public string CustomerRole { get; set; }
 
      
 
