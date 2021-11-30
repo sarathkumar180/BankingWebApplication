@@ -56,7 +56,9 @@ namespace BankingWebApplication.Controllers
 
                 TempData["Header"] = header;
 
-               
+                var user = customerBl.GetAllCustomer(_context);
+                ViewBag.OpenAccount = user != null && user.Count > 0;
+
                 var accounts = accountbl.GetAllAccount(_context);
 
                 

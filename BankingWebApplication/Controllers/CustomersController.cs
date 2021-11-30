@@ -193,6 +193,8 @@ namespace BankingWebApplication.Controllers
 
             if (userinfo != null)
             {
+                if(string.IsNullOrEmpty(userinfo.CustomerRole))
+                    return View("Error", new ErrorViewModel { RequestId = "Authorization Error - User Role not assigned" });
                 //user found in the database
                 ViewBag.LoginSucceed = "Succeed!! Welcome.";
                 HttpContext.Session.SetString("CustomerNo", userinfo.CustomerNo.ToString());//set CustomerNo value use in Welcome Action

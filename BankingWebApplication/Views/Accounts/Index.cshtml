@@ -6,7 +6,7 @@
 
 <h2>@TempData["Header"]</h2>
 <p>
-    @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+    @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString() && ViewBag.OpenAccount)
     {
 <a asp-action="OpenAccount" style="font-size: medium;font-weight: bold">Add New Account</a>}
     @{ TempData.Keep("CustomerNo"); }

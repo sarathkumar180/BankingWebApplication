@@ -90,7 +90,7 @@ namespace DAL
                                     CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
                                 }).ToList();
 
-                return userInfo.Where(x => x.CustomerRole != "Admin").ToList();
+                return userInfo.Where(x => x.CustomerRole != RoleEnum.Admin.ToString()).ToList();
             }
             catch (Exception e)
             {
