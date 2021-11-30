@@ -8,8 +8,7 @@
 <p>
     @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
     {
-        <a asp-action="OpenAccount" style="font-size: medium;font-weight: bold">Add New Account</a>
-    }
+<a asp-action="OpenAccount" style="font-size: medium;font-weight: bold">Add New Account</a>}
     @{ TempData.Keep("CustomerNo"); }
 </p>
 <table class="table">
@@ -39,10 +38,10 @@
     </thead>
     <tbody>
 
-        @*@if (Model != null && Model.Any())
-            {*@
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
         {
+@foreach (var item in Model)
+{
 
 <tr>
     <td>
@@ -71,29 +70,22 @@
 
         @if (item.AccountStatus)
         {
-            @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
-            {
-                <a asp-action="Deposit" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Deposit</a>
-                <span>&nbsp;| &nbsp; </span>
-                <a asp-action="Withdraw" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Withdraw</a>
-                <span>&nbsp;| &nbsp; </span>
-            }
-            <a asp-action="TransactionRange" asp-route-id="@item.AccountNo" style="        font-size: medium;
-        font-weight: bold
-">View Transactions</a>
-
-        }
+@if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+{
+<a asp-action="Deposit" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Deposit</a>
+                            <span>&nbsp;| &nbsp; </span>
+                                                        <a asp-action="Withdraw" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">Withdraw</a>
+                                                                                    <span>&nbsp;| &nbsp; </span>}
+                        <a asp-action="TransactionRange" asp-route-id="@item.AccountNo" style="font-size: medium; font-weight: bold">View Transactions</a>}
     </td>
 </tr>
+} }
+else
+{
+
+<tr>
+    <td> No Accounts found</td>
+</tr>
        }
-        @*}
-            else
-            {
-
-                    <tr>
-                        <td> No Accounts found</td>
-                    </tr>
-
-            }*@
     </tbody>
 </table>

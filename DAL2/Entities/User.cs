@@ -5,7 +5,7 @@ namespace DAL.Entities
     public class User
     {
         [Required]
-        [MinLength(6)]
+        [MinLength(5)]
         public string UserName { get; set; }
 
         [Required]
