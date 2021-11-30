@@ -48,7 +48,7 @@ namespace DAL
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return  false;
+                return false;
             }
         }
 
@@ -75,22 +75,22 @@ namespace DAL
             try
             {
                 var userInfo = (from c in context.Customer
-                    join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
-                    from urMapping in urm.DefaultIfEmpty()
-                    select new Customer()
-                    {
-                        Id = c.Id,
-                        UserName = c.UserName,
-                        CustomerNo = c.CustomerNo,
-                        Address = c.Address,
-                        PhoneNumber = c.PhoneNumber,
-                        Email = c.Email,
-                        FirstName = c.FirstName,
-                        LastName = c.LastName,
-                        CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
-                        }).ToList();
+                                join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                                from urMapping in urm.DefaultIfEmpty()
+                                select new Customer()
+                                {
+                                    Id = c.Id,
+                                    UserName = c.UserName,
+                                    CustomerNo = c.CustomerNo,
+                                    Address = c.Address,
+                                    PhoneNumber = c.PhoneNumber,
+                                    Email = c.Email,
+                                    FirstName = c.FirstName,
+                                    LastName = c.LastName,
+                                    CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
+                                }).ToList();
 
-                return userInfo.Where(x =>x.CustomerRole !=  "Admin").ToList();
+                return userInfo.Where(x => x.CustomerRole != "Admin").ToList();
             }
             catch (Exception e)
             {
@@ -106,17 +106,17 @@ namespace DAL
             {
 
                 var returnList = (from c in context.Customer
-                    join crm in context.UserRolesMapping on c.Id equals crm.CustomerId
-                    where crm.RoleId != 3 //Ignore admin and Teller users
-                    select new UserRolesMapping()
-                    {
-                        Id = crm.Id,
-                        RoleId = crm.RoleId,
-                        CustomerId = crm.CustomerId,
-                        CustomerName = c.FirstName + " " + c.LastName,
-                        CustomerNo = c.CustomerNo,
-                        RoleName = crm.RoleId == 0 ? string.Empty : ((RoleEnum)crm.RoleId).ToString()
-                    }).ToList();
+                                  join crm in context.UserRolesMapping on c.Id equals crm.CustomerId
+                                  where crm.RoleId != 3 //Ignore admin and Teller users
+                                  select new UserRolesMapping()
+                                  {
+                                      Id = crm.Id,
+                                      RoleId = crm.RoleId,
+                                      CustomerId = crm.CustomerId,
+                                      CustomerName = c.FirstName + " " + c.LastName,
+                                      CustomerNo = c.CustomerNo,
+                                      RoleName = crm.RoleId == 0 ? string.Empty : ((RoleEnum)crm.RoleId).ToString()
+                                  }).ToList();
 
                 return returnList;
             }
@@ -172,22 +172,22 @@ namespace DAL
         {
 
             var userinfo = (from c in context.Customer
-                join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
-                from urMapping in urm.DefaultIfEmpty()
-                where c.CustomerNo == customerNo
-                select new Customer()
-                {
-                    Id = c.Id,
-                    UserName = c.UserName,
-                    CustomerNo = c.CustomerNo,
-                    Address = c.Address,
-                    PhoneNumber = c.PhoneNumber,
-                    Email = c.Email,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
-                    Password = c.Password
-                }).FirstOrDefault();
+                            join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                            from urMapping in urm.DefaultIfEmpty()
+                            where c.CustomerNo == customerNo
+                            select new Customer()
+                            {
+                                Id = c.Id,
+                                UserName = c.UserName,
+                                CustomerNo = c.CustomerNo,
+                                Address = c.Address,
+                                PhoneNumber = c.PhoneNumber,
+                                Email = c.Email,
+                                FirstName = c.FirstName,
+                                LastName = c.LastName,
+                                CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty,
+                                Password = c.Password
+                            }).FirstOrDefault();
 
             return userinfo;
         }
@@ -196,19 +196,19 @@ namespace DAL
         {
 
             var allCUstomers = (from c in context.Customer
-                join m in context.UserRolesMapping on c.Id equals m.CustomerId
-                select new Customer()
-                {
-                    Id = c.Id,
-                    UserName = c.UserName,
-                    CustomerNo = c.CustomerNo,
-                    Address = c.Address,
-                    PhoneNumber = c.PhoneNumber,
-                    Email = c.Email,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    CustomerRole = m != null ? ((RoleEnum)m.RoleId).ToString() : string.Empty
-                }).AsEnumerable();
+                                join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                                select new Customer()
+                                {
+                                    Id = c.Id,
+                                    UserName = c.UserName,
+                                    CustomerNo = c.CustomerNo,
+                                    Address = c.Address,
+                                    PhoneNumber = c.PhoneNumber,
+                                    Email = c.Email,
+                                    FirstName = c.FirstName,
+                                    LastName = c.LastName,
+                                    CustomerRole = m != null ? ((RoleEnum)m.RoleId).ToString() : string.Empty
+                                }).AsEnumerable();
 
             return allCUstomers;
         }
@@ -241,7 +241,7 @@ namespace DAL
             {
                 return false;
             }
-            
+
         }
 
         public List<Payee> GetPayeesForCustomerNo(int customerNo, ApplicationDbContext context)
@@ -284,6 +284,25 @@ namespace DAL
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public List<Account> GetAllAccountsForCustomer(int customerNo, ApplicationDbContext context)
+        {
+            try
+            {
+                var customerId = context.Customer.Where(x => x.CustomerNo == customerNo).Select(x => x.Id).FirstOrDefault();
+                if (customerId != 0)
+                {
+                    return context.Account.Where(x => x.CustomerId == customerId).ToList();
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
             }
         }
     }

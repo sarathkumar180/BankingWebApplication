@@ -5,7 +5,8 @@
 
 @{ ViewData["Title"] = "Payees"; }
 
-<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"  asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+></script>
 <script type="text/javascript">
     function EnableOrDisablePayButton() {
         //Reference the Table.
@@ -35,7 +36,7 @@
                         if (this.checked) {
                             this.parentNode.parentNode.querySelector('.Selected[type="text"]').disabled = false;
                         } else {
-                            this.parentNode.parentNode.querySelector('.Selected[type="text"]').value = 0.00;
+                            this.parentNode.parentNode.querySelector('.Selected[type="text"]').value = "0.00";
                             this.parentNode.parentNode.querySelector('.Selected[type="text"]').disabled = true;
 
                         }
@@ -43,7 +44,29 @@
 
                     });
             });
-    });
+
+            $("#ddlAccounts").change(function () {
+                var selectedAccount = document.getElementById("ddlAccounts").value;
+                if (selectedAccount != null) {
+                    var hiddenFromAccounts = document.getElementsByClassName("FromAccountNo");
+                    if (hiddenFromAccounts != null) {
+                        for (var i = 0; i < hiddenFromAccounts.length; i++) {
+                            hiddenFromAccounts[i].value = selectedAccount;
+                        }
+                    }
+                }
+            });
+   });
+
+    //function validate(parameters) {
+    //    debugger;
+    //    var ddlAccounts = document.getElementById("ddlAccounts").text;
+    //    var selectedOption = ddlAccounts.options[ddlAccounts.selectedIndex].text;
+    //    var splitOption = selectedOption.split(" ");
+    //    var balanceAmount = splitOption[splitOption.length - 1];
+    //    alert(balanceAmount);
+    //    return false;
+    //}
 
 </script>
 
@@ -55,6 +78,15 @@
         <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")"
            asp-route-payeeId="0" asp-route-newPayee="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
     </p>
+    
+    <br/>
+    <br/>
+    
+    @Html.Label("From Account: ")
+    @Html.DropDownList("Accounts", (IEnumerable<SelectListItem>)ViewBag.Accounts,new {@class="form-control",id="ddlAccounts", style= "font-size: medium;font-weight: bold" });
+    
+    <br/>
+    <br/>
     <table id="tablePayee" class="table">
         <thead>
             <tr>
@@ -90,12 +122,17 @@
                 <tr>
                     <td>
                         @Html.CheckBoxFor(modelItem => Model[x].IsChecked, new { @class = "Selected" })
+                        @Html.HiddenFor(modelItem => Model[x].Id)
+                        @Html.HiddenFor(modelItem => Model[x].PayeeAccountNumber)
+                        @Html.HiddenFor(modelItem => Model[x].BankCode)
+                        @Html.HiddenFor(modelItem => Model[x].PayeeName)
+                        @Html.HiddenFor(modelItem => Model[x].FromAccountNo,new {@class= "FromAccountNo" })
                     </td>
                     <td>
                         <a asp-action="Payee" asp-route-customerNo="@Model[x].CustomerNo" asp-route-payeeId="@Model[x].Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => Model[x].PayeeName)</a>
                     </td>
                     <td>
-                        @Html.TextBoxFor(modelItem => Model[x].AccountNumber, new { disabled = "disabled" })
+                        @Html.DisplayFor(modelItem => Model[x].PayeeAccountNumber)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => Model[x].BankCode)
@@ -115,7 +152,7 @@
     </table>
 
     <div class="form-group">
-        <input id="btnPay" type="submit" value="Pay" class="btn btn-default" disabled="disabled" />
+        <input id="btnPay" type="submit" value="Pay" class="btn btn-default" disabled="disabled" onclick="validate(); return false;"/>
     </div>
 
 </form>

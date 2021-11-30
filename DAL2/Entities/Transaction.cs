@@ -44,11 +44,11 @@ namespace DAL.Entities
             return randomint;
         }
 
-        public static Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string type)
+        public static Transaction CreateTransaction(IAccount account, IAccount account2, Payee payeeAccountNo,decimal amount, string type)
         {
             string transactionInfo;
             int accountno = account.AccountNo;
-            int customerId = account.CustomerNo;
+            int customerId = account.CustomerId;
 
             Transaction transaction = new Transaction()
             {
@@ -79,6 +79,11 @@ namespace DAL.Entities
                     transactionInfo = $"Received {amount} from ({account.AccountType}){account.AccountNo}";
                     transaction.TransactionInfo = transactionInfo;
                     transaction.Accountno = account2.AccountNo;
+                    break;
+                case "PayeeTransfer":
+                    transactionInfo = $"Payee Transfer {amount} to ({payeeAccountNo.PayeeName}){payeeAccountNo.PayeeAccountNumber}";
+
+                    transaction.TransactionInfo = transactionInfo;
                     break;
                 default:
                     transactionInfo = $"Transaction type is invalid";

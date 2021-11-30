@@ -149,7 +149,7 @@ CREATE TABLE [dbo].[Payee](
 	[IsActive] [bit] NULL,
 	[IsDeleted] [bit] NULL,
 	[CreatedDateTime] [datetime2](7) NOT NULL,
-	[AccountNumber] [int] NOT NULL,
+	[PayeeAccountNumber] [int] NOT NULL,
 	[PayeeName] [nvarchar](200) NOT NULL,
  CONSTRAINT [PK_Payee] PRIMARY KEY CLUSTERED 
 (

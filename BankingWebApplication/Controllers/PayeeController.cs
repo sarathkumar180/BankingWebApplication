@@ -9,6 +9,7 @@ using DAL;
 using DAL.Entities;
 using DAL.Enum;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BankingWebApplication.Controllers
 {
@@ -17,6 +18,7 @@ namespace BankingWebApplication.Controllers
         private readonly ApplicationDbContext _context;
 
         CustomerBL customerbl = new CustomerBL();
+        AccountBL _accountBl = new AccountBL();
 
         public PayeeController(ApplicationDbContext context)
         {
@@ -27,9 +29,24 @@ namespace BankingWebApplication.Controllers
             if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString() &&
                 !string.IsNullOrEmpty(HttpContext.Session.GetString("CustomerNo")))
             {
-                var payees = customerbl.GetPayeesForCustomerNo(int.Parse(HttpContext.Session.GetString("CustomerNo")),_context);
-                payees?.ForEach(s => s.CustomerNo = int.Parse(HttpContext.Session.GetString("CustomerNo")));
-                return View(payees);
+                int customerNo = int.Parse(HttpContext.Session.GetString("CustomerNo"));
+                var accounts = GetAllAccounts(customerNo);
+                if (accounts != null && accounts.Any())
+                {
+                    var payees = customerbl.GetPayeesForCustomerNo(customerNo, _context);
+                    payees?.ForEach(s =>
+                    {
+                        s.CustomerNo = int.Parse(HttpContext.Session.GetString("CustomerNo"));
+                        s.FromAccountNo = int.Parse(accounts[0].Value);
+                    });
+                    ViewBag.Accounts = accounts;
+                    return View(payees);
+                }
+                else
+                {
+                    ViewBag.Accounts = null;
+                    return View();
+                }
             }
 
             return View("Error", new ErrorViewModel { RequestId = "Unauthorized Request.Authorization Error" });
@@ -38,14 +55,16 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public IActionResult Index(IEnumerable<Payee> model)
         {
-            if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString() &&
-                !string.IsNullOrEmpty(HttpContext.Session.GetString("CustomerNo")))
+            var enumerable = model as Payee[] ?? model.ToArray();
+            if (enumerable.Any(x => x.IsChecked && x.AmountToPay > 0))
             {
-                var payees = customerbl.GetPayeesForCustomerNo(int.Parse(HttpContext.Session.GetString("CustomerNo")), _context);
-                payees?.ForEach(s => s.CustomerNo = int.Parse(HttpContext.Session.GetString("CustomerNo")));
-                return View(payees);
-            }
+                foreach (var payee in enumerable.Where(x=>x.IsChecked && x.AmountToPay > 0))
+                {
+                    _accountBl.PayeeTransfer(payee.FromAccountNo,payee.PayeeAccountNumber,payee.AmountToPay,_context);
+                }
 
+                return RedirectToAction("Index", "Accounts");
+            }
             return View("Error", new ErrorViewModel { RequestId = "Unauthorized Request.Authorization Error" });
         }
 
@@ -106,5 +125,24 @@ namespace BankingWebApplication.Controllers
             return View(model);
         }
 
+        private List<SelectListItem> GetAllAccounts(int customerNo)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            var allAccounts = customerbl.GetAllAccountsForCustomer(customerNo, _context);
+
+            if (allAccounts != null && allAccounts.Any())
+            {
+                foreach (var acc in allAccounts)
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Text = acc.AccountNo + " / " + acc.AccountType + " / Balance : " + $"{acc.Balance:C}",
+                        Value = acc.AccountNo.ToString()
+                    });
+                }
+            }
+
+            return list;
+        }
     }
 }

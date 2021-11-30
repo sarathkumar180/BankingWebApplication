@@ -15,7 +15,7 @@ namespace DAL.Entities
         public string PayeeName { get; set; }
 
         [Required]
-        public int AccountNumber { get; set; }
+        public int PayeeAccountNumber { get; set; }
 
         [MinLength(6)]
         [MaxLength(20)]
@@ -36,5 +36,8 @@ namespace DAL.Entities
 
         [NotMapped]
         public decimal AmountToPay { get; set; }
+
+        [NotMapped]
+        public int FromAccountNo { get; set; }
     }
 }

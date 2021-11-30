@@ -21,10 +21,10 @@ namespace DAL.Entities
         void Deposit(IAccount acc, decimal amount, ApplicationDbContext _context);
         void Withdraw(IAccount account, decimal amount, ApplicationDbContext _context);
         void Transfer(IAccount fromAccountno, IAccount toAccountno, decimal amount, ApplicationDbContext _context);
-
+        void PayeeTransfer(int fromAccountno, int toAccountno, decimal amount, ApplicationDbContext _context);
         IAccount GetAccount(int accountno, ApplicationDbContext _context);
 
-        Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info,
+        Transaction CreateTransaction(IAccount account, IAccount account2, Payee payeeAccountNo, decimal amount, string info,
             ApplicationDbContext _context);
         List<Transaction> GetTransaction(int accountno, ApplicationDbContext context);
 

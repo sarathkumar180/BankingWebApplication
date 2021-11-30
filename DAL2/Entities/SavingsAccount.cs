@@ -49,6 +49,13 @@ namespace DAL.Entities
 
         }
 
+        public override void PayeeTransfer(IAccount fromAccount, Payee toAccount, decimal amount)
+        {
+
+            base.PayeeTransfer(fromAccount, toAccount, amount);
+
+        }
+
         public override string GetAccountType(IAccount account)
         {
             return AccountType = "Savings";

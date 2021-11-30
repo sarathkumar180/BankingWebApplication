@@ -64,5 +64,10 @@ namespace BusinessLayer
         {
             return customerdal.GetPayeesForCustomerNo(customerNo, context);
         }
+
+        public List<Account> GetAllAccountsForCustomer(int customerNo, ApplicationDbContext context)
+        {
+            return customerdal.GetAllAccountsForCustomer(customerNo, context);
+        }
     }
 }

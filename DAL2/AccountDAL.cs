@@ -59,6 +59,8 @@ namespace DAL
 
             return tempList;
         }
+
+        
         #endregion
 
         
@@ -146,7 +148,7 @@ namespace DAL
                 if(amount > 0)
                 {
                     //condition check to prevent negative amount transaction
-                    Transaction transaction = CreateTransaction(acc, acc, amount, "Deposit", _context);
+                    Transaction transaction = CreateTransaction(acc, acc,null, amount, "Deposit", _context);
                     _context.Add(transaction);
                 }
                 
@@ -172,7 +174,15 @@ namespace DAL
                 {
                     SavingsAccount ca = new SavingsAccount();
                     ca.Withdraw(account, amount);
+                    
                 }
+                if (amount > 0)
+                {
+                    //condition check to prevent negative amount transaction
+                    var transaction = Transaction.CreateTransaction(account, account, null, amount, "Withdraw");
+                    _context.Transaction.Add(transaction);
+                }
+
 
                 _context.Update(account);
                 _context.SaveChanges();
@@ -205,8 +215,8 @@ namespace DAL
                 if (amount > 0 && fromAccount.Balance >= amount)
                 {
                     // aamount must greater than 0 to avoid unnecessary transaction
-                    Transaction transactionfromAccount = CreateTransaction(fromAccount, toAccount, amount, "Transfer", _context);
-                    Transaction transactiontoAccount = CreateTransaction(fromAccount, toAccount, amount, "Received", _context);
+                    Transaction transactionfromAccount = CreateTransaction(fromAccount, toAccount, null,amount, "Transfer", _context);
+                    Transaction transactiontoAccount = CreateTransaction(fromAccount, toAccount, null,amount, "Received", _context);
 
                     _context.Add(transactionfromAccount);
                     _context.Add(transactiontoAccount);
@@ -230,9 +240,39 @@ namespace DAL
             }
 
         }//end
+
+        public void PayeeTransfer(int fromAccountno, int toAccountno, decimal amount, ApplicationDbContext _context)
+        {
+            Account fromAccount = _context.Account.FirstOrDefault(x => x.AccountNo == fromAccountno);
+            Payee toAccount = _context.Payee.FirstOrDefault(x => x.PayeeAccountNumber == toAccountno);
+            if (fromAccount != null && fromAccount.AccountStatus && toAccount != null)
+            {
+                if (amount > 0 && fromAccount.Balance >= amount)
+                {
+                    // aamount must greater than 0 to avoid unnecessary transaction
+                    Transaction transactionfromAccount = CreateTransaction(fromAccount, null, toAccount, amount, "PayeeTransfer", _context);
+                    _context.Transaction.Add(transactionfromAccount);
+                }
+
+                if (fromAccount.AccountType == "Savings")
+                {
+                    SavingsAccount ca = new SavingsAccount();
+                    ca.PayeeTransfer(fromAccount, toAccount, amount);
+                }
+
+                _context.Update(fromAccount);
+                _context.SaveChanges();
+
+            }//end if account is active
+            else
+            {
+                //account is not active
+            }
+
+        }//end
         #endregion
 
-       #region IAccount GetAccount(int accountno)
+        #region IAccount GetAccount(int accountno)
         public IAccount GetAccount(int accountno, ApplicationDbContext _context)
         {
 
@@ -269,9 +309,9 @@ namespace DAL
         #endregion
 
         #region Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info, ApplicationDbContext _context)
-        public Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info, ApplicationDbContext _context)
+        public Transaction CreateTransaction(IAccount account, IAccount account2, Payee payeeAccountNo, decimal amount, string info, ApplicationDbContext _context)
         { 
-            return Transaction.CreateTransaction(account, account2, amount, info);
+            return Transaction.CreateTransaction(account, account2, payeeAccountNo,amount, info);
         }
 
         

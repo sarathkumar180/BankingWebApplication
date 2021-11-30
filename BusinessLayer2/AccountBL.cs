@@ -100,10 +100,14 @@ namespace BusinessLayer
             accountdal.Transfer(fromAccount, toAccount, amount, _context);
         }
 
+        public void PayeeTransfer(int fromAccountno, int toAccountno, decimal amount, ApplicationDbContext _context)
+        {
+            accountdal.PayeeTransfer(fromAccountno, toAccountno, amount, _context);
+        }
        #region Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info,ApplicationDbContext _context)
         public Transaction CreateTransaction(IAccount account, IAccount account2, decimal amount, string info,ApplicationDbContext _context)
         {
-            return accountdal.CreateTransaction(account, account2, amount, info,_context);
+            return accountdal.CreateTransaction(account, account2, null,amount, info,_context);
         }
         #endregion
 

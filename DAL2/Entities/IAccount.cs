@@ -33,6 +33,7 @@ namespace DAL.Entities
         bool Withdraw(IAccount account, decimal amount);
         bool Deposit(IAccount account, decimal amount);
         void Transfer(IAccount fromAccount, IAccount toAccount, decimal amount);
+        void PayeeTransfer(IAccount fromAccount, Payee toAccount, decimal amount);
         bool AcccountIsFound(int accountno);
         IAccount GetAccount(int accountno);
         decimal GetIntrestrate();

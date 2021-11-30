@@ -126,10 +126,10 @@ namespace DAL.Entities
 
             if ((acc.Balance - amount) >= 0 && acc.AccountStatus)
             {
-                if (!IsTransfer)
-                {
-                    Transaction.CreateTransaction(acc, acc, amount, "Withdraw");
-                }
+                //if (!IsTransfer)
+                //{
+                //    Transaction.CreateTransaction(acc, acc, null,amount, "Withdraw");
+                //}
                 acc.Balance -= amount;
                 status = true;
 
@@ -152,7 +152,7 @@ namespace DAL.Entities
                 acc.Balance += amount;
                 if (!IsTransfer)
                 {
-                    Transaction.CreateTransaction(acc, acc, amount, "Deposit");
+                    Transaction.CreateTransaction(acc, acc, null,amount, "Deposit");
                 }
                 status = true;
             }
@@ -195,7 +195,38 @@ namespace DAL.Entities
             
         }
 
-       
+        public virtual void PayeeTransfer(IAccount firstAccount, Payee secondAccount, decimal amount)
+        {
+            IsTransfer = true;
+
+
+            if (!firstAccount.AccountStatus)
+            {
+                Console.WriteLine($"From Accounts is invalid");
+            }
+            else if (firstAccount.AccountNo == secondAccount.PayeeAccountNumber)
+            {
+                Console.WriteLine($"Can not transfer to the same account!");
+            }
+
+            else if (firstAccount.Balance >= amount)
+            {
+                firstAccount.Withdraw(firstAccount, amount);
+
+            }
+            else if (firstAccount.Balance >= amount)
+            {
+                Console.WriteLine($"Invalid transfer account type");
+            }
+            else
+            {
+                Console.WriteLine($"Sorry!! Insufficient fund, Missing ${amount - firstAccount.Balance}");
+            }
+
+
+        }
+
+
 
 
 
