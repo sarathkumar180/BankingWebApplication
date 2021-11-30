@@ -61,15 +61,18 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo" style="font-size: medium;font-weight: bold">Accounts</a>
+            @if (string.IsNullOrEmpty(Context.Session.GetString("UserRole")))
+            {
+                <a asp-controller="Accounts" asp-action="Index" asp-route-id="@item.CustomerNo" style="font-size: medium; font-weight: bold">Accounts</a>
                 <span>&nbsp;| &nbsp; </span>
-                <a asp-action="Edit" asp-route-customerno="@item.CustomerNo" style="font-size: medium;font-weight: bold">Edit</a>
+            }
+                <a asp-action="Edit" asp-route-customerno="@item.CustomerNo" style="font-size: medium; font-weight: bold">Edit</a>
                 <span>&nbsp;| &nbsp; </span>
-                <a asp-action="Details" asp-route-id="@item.CustomerNo" style="font-size: medium;font-weight: bold">Details</a>
+                <a asp-action="Details" asp-route-id="@item.CustomerNo" style="font-size: medium; font-weight: bold">Details</a>
                 @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") == "Admin")
                 {
                     <span>&nbsp;| &nbsp; </span>
-            <a asp-action="EditRole" asp-route-customerNo="@item.CustomerNo" asp-route-userName="@item.UserName" asp-route-roleName="@item.CustomerRole">Edit User Roes</a>}
+                    <a asp-action="EditRole" asp-route-customerNo="@item.CustomerNo" asp-route-userName="@item.UserName" asp-route-roleName="@item.CustomerRole" style="font-size: medium; font-weight: bold">Edit User Roes</a>}
             </td>
         </tr>
             

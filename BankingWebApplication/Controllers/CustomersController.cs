@@ -142,6 +142,13 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult EditRole(int customerNo, string userName, string roleName)
         {
+            if(HttpContext.Session.GetString("UserRole") != RoleEnum.Admin.ToString())
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Access denied" });
+
+            var customer = customerbl.GetCustomerFromCustomerNo(customerNo, _context);
+            if(customer == null || (customer.UserName == userName))
+                return View("Error", new ErrorViewModel { RequestId = "Invalid request - Access denied" });
+
             List<SelectList> roles = new List<SelectList>();
            roles.Add(new SelectList(RoleEnum.Teller.ToString(), RoleEnum.Teller.ToString()));
            roles.Add(new SelectList(RoleEnum.Customer.ToString(), RoleEnum.Customer.ToString()));
@@ -156,6 +163,9 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public IActionResult EditRole(EditRoleViewModel model)
         {
+            if (HttpContext.Session.GetString("UserRole") != RoleEnum.Admin.ToString())
+               return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Access denied" });
+
             if (model != null)
             {
                 Enum.TryParse(model.SelectedRole, out RoleEnum role);

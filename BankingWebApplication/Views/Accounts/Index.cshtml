@@ -8,7 +8,7 @@
 <p>
     @if (Context.Session.GetString("UserRole") != null && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString() && ViewBag.OpenAccount)
     {
-<a asp-action="OpenAccount" style="font-size: medium;font-weight: bold">Add New Account</a>}
+<a asp-action="OpenAccount" style="font-size: medium;font-weight: bold" asp-route-customerNo="@TempData["CustomerNo"]">Add New Account</a>}
     @{ TempData.Keep("CustomerNo"); }
 </p>
 <table class="table">
@@ -45,7 +45,7 @@
 
 <tr>
     <td>
-        <a asp-action="TransactionList" asp-route-id="@item.AccountNo">@Html.DisplayFor(modelItem => item.AccountNo)</a>
+        <a asp-action="TransactionList" asp-route-id="@item.AccountNo" style="font-size: medium;font-weight: bold">@Html.DisplayFor(modelItem => item.AccountNo)</a>
     </td>
 
     <td>

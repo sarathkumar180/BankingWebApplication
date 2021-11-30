@@ -45,6 +45,10 @@ namespace BankingWebApplication.Controllers
                     var customer = customerBl.GetCustomerFromCustomerNo(id.Value, _context);
                     if (customer != null)
                     {
+                        if (string.IsNullOrEmpty(customer.CustomerRole))
+                        {
+                            return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Cannot create new accounts for the user.User Role not assigned" });
+                        }
                         header = $"Accounts : {customer.CustomerNo} / {customer.FirstName} {customer.LastName}";
                         TempData["CustomerNo"] = id;
                     }
@@ -57,7 +61,7 @@ namespace BankingWebApplication.Controllers
                 TempData["Header"] = header;
 
                 var user = customerBl.GetAllCustomer(_context);
-                ViewBag.OpenAccount = user != null && user.Count > 0;
+                ViewBag.OpenAccount = user != null && user.Count > 0 && user.Any(x => x.CustomerRole == RoleEnum.Customer.ToString());
 
                 var accounts = accountbl.GetAllAccount(_context);
 
@@ -96,11 +100,26 @@ namespace BankingWebApplication.Controllers
         }
 
         // GET: Accounts/Create/{customerNo}
-        public IActionResult OpenAccount()
+        public IActionResult OpenAccount(int? customerNo)
         {
             var id = TempData["CustomerNo"];
             TempData.Keep("CustomerNo");
+            if (customerNo != null)
+            {
+                var customer = customerBl.GetCustomerFromCustomerNo(customerNo.Value,_context);
+                if (customer == null || customer.CustomerRole == RoleEnum.Teller.ToString())
+                {
+                    return View("Error", new ErrorViewModel { RequestId = "Invalid Request - Cannot open new account for requested customer no." });
+                }
+            }
+
             var custList = GetAllCustomers()?.AsEnumerable();
+
+
+            if (custList == null ||!custList.Any())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Invalid Request - Cannot open new account. Users not available/roles not mapped." });
+            }
             string customerName = null;
             Account acc = new Account();
             acc.Interestrate = 0.02m;
@@ -302,7 +321,7 @@ namespace BankingWebApplication.Controllers
 
 
 
-                var AccList =
+                var accList =
                     _context.Account
                     .Where(a => a.CustomerNo == acc.CustomerNo)
                     .Where(a => a.AccountNo != acc.AccountNo).ToList();
@@ -310,7 +329,7 @@ namespace BankingWebApplication.Controllers
                 TransferAccount ta = new TransferAccount()
                 {
                     account = acc,
-                    accounts = AccList
+                    accounts = accList
 
                 };
 
@@ -331,7 +350,7 @@ namespace BankingWebApplication.Controllers
             {
 
                 Account fromAccount = _context.Account.Find(id); // find transfer account from
-                Account toAccount = _context.Account.Find(ToAccountno); /// get to acc
+                Account toAccount = _context.Account.Find(ToAccountno); // get to acc
 
                 accountbl.Transfer(fromAccount, toAccount, amount, _context); // calling businesslayer
 
@@ -394,7 +413,7 @@ namespace BankingWebApplication.Controllers
             List<SelectListItem> list = new List<SelectListItem>();
             var allCustomers = customerBl.GetAllCustomer(_context);
 
-            if (allCustomers.Any())
+            if (allCustomers.Any(x => !string.IsNullOrEmpty(x.CustomerRole) && x.CustomerRole !=RoleEnum.Teller.ToString() ))
             {
                 foreach (var cust in allCustomers)
                 {
