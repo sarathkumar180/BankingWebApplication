@@ -71,7 +71,7 @@ namespace BankingWebApplication.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("CustomerNo,UserName,Password,FirstName,LastName,Email,Address")] Customer customer)
+        public IActionResult Create([Bind("CustomerNo,UserName,Password,PhoneNumber,FirstName,LastName,Email,Address")] Customer customer)
         {
             if (_context.Customer.Any(x => x.UserName == customer.UserName))
             {
@@ -241,6 +241,7 @@ namespace BankingWebApplication.Controllers
         {
            
             HttpContext.Session.Clear();//remove current session
+            TempData["Message"] = "Log out successfully";
             return RedirectToAction("Login", "Customers");
         }
 

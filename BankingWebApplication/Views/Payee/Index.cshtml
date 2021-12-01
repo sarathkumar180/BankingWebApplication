@@ -72,84 +72,86 @@
 
 <h2>Transfer to Payees</h2>
 <form asp-action="Index" method="post">
-    <p>
+    @if (ViewBag != null && ViewBag.Accounts != null && ViewBag?.Accounts.Count>  0)
+    {
+        <p>
 
-        <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")"
-           asp-route-payeeId="0" asp-route-newPayee="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
-    </p>
-    
-    
+            <a asp-action="Payee" asp-route-customerNo="@Context.Session.GetString("CustomerNo")"
+               asp-route-payeeId="0" asp-route-newPayee="true" style="font-size: medium; font-weight: bold">Add New Payee</a>
+        </p>
+
+    }
     <br/>
-    
-        @Html.Label("From Account: ")
-        @Html.DropDownList("Accounts", (IEnumerable<SelectListItem>) ViewBag.Accounts, new {@class = "form-control", id = "ddlAccounts", style = "font-size: medium;font-weight: bold"})
-    
+
+    @Html.Label("From Account: ")
+    @Html.DropDownList("Accounts", (IEnumerable<SelectListItem>) ViewBag.Accounts, new {@class = "form-control", id = "ddlAccounts", style = "font-size: medium;font-weight: bold"})
+
     <br/>
-    
+
     <table id="tablePayee" class="table">
         <thead>
-            <tr>
-                <th>
-                    Select to Pay
-                </th>
-                <th>
-                    PayeeName
-                </th>
-                <th>
-                    @Html.DisplayName("AccountNumber")
-                </th>
-                <th>
-                    @Html.DisplayName("BankCode")
-                </th>
+        <tr>
+            <th>
+                Select to Pay
+            </th>
+            <th>
+                PayeeName
+            </th>
+            <th>
+                @Html.DisplayName("AccountNumber")
+            </th>
+            <th>
+                @Html.DisplayName("BankCode")
+            </th>
 
-                <th>
-                    @Html.DisplayName("IsActive")
-                </th>
-                <th>
-                    Amount To Pay
-                </th>
-                <th>
+            <th>
+                @Html.DisplayName("IsActive")
+            </th>
+            <th>
+                Amount To Pay
+            </th>
+            <th>
 
-                </th>
-                <th></th>
-            </tr>
+            </th>
+            <th></th>
+        </tr>
         </thead>
         <tbody>
 
-            @for (int x = 0; x < Model.Count(); x++)
-            {
-                <tr>
-                    <td>
-                        @Html.CheckBoxFor(modelItem => Model[x].IsChecked, new { @class = "Selected" })
-                        @Html.HiddenFor(modelItem => Model[x].Id)
-                        @Html.HiddenFor(modelItem => Model[x].PayeeAccountNumber)
-                        @Html.HiddenFor(modelItem => Model[x].BankCode)
-                        @Html.HiddenFor(modelItem => Model[x].PayeeName)
-                        @Html.HiddenFor(modelItem => Model[x].FromAccountNo,new {@class= "FromAccountNo" })
-                    </td>
-                    <td>
-                        <a asp-action="Payee" asp-route-customerNo="@Model[x].CustomerNo" asp-route-payeeId="@Model[x].Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => Model[x].PayeeName)</a>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model[x].PayeeAccountNumber)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model[x].BankCode)
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(modelItem => Model[x].IsActive, new { @onclick = "return false" })
-                    </td>
+        @for (int x = 0; x < Model.Count(); x++)
+        {
+            <tr>
+                <td>
+                    @Html.CheckBoxFor(modelItem => Model[x].IsChecked, new {@class = "Selected"})
+                    @Html.HiddenFor(modelItem => Model[x].Id)
+                    @Html.HiddenFor(modelItem => Model[x].PayeeAccountNumber)
+                    @Html.HiddenFor(modelItem => Model[x].BankCode)
+                    @Html.HiddenFor(modelItem => Model[x].PayeeName)
+                    @Html.HiddenFor(modelItem => Model[x].FromAccountNo, new {@class = "FromAccountNo"})
+                </td>
+                <td>
+                    <a asp-action="Payee" asp-route-customerNo="@Model[x].CustomerNo" asp-route-payeeId="@Model[x].Id" asp-route-newPayee="false">@Html.DisplayFor(modelItem => Model[x].PayeeName)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model[x].PayeeAccountNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model[x].BankCode)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(modelItem => Model[x].IsActive, new {@onclick = "return false"})
+                </td>
 
-                    <td>
-                        @Html.TextBoxFor(modelItem => Model[x].AmountToPay, "{0:n2}", new { @class = "Selected", disabled = "disabled" })
-                    </td>
-                </tr>
-}
+                <td>
+                    @Html.TextBoxFor(modelItem => Model[x].AmountToPay, "{0:n2}", new {@class = "Selected", disabled = "disabled"})
+                </td>
+            </tr>
+        }
 
 
         </tbody>
     </table>
-    
+
     @if (Model != null && Model.Any())
     {
         <div class="form-group">

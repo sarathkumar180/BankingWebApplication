@@ -82,6 +82,11 @@ namespace BankingWebApplication.Controllers
             {
                 return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
             }
+
+            if (GetAllAccounts(customerNo).Count == 0)
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - No accounts mapped" });
+            }
             var loggedInUser = HttpContext.Session.GetString("CustomerNo");
             var customer = customerbl.GetCustomerFromCustomerNo(customerNo, _context);
             if (customer != null && loggedInUser == customer.CustomerNo.ToString())
@@ -121,6 +126,10 @@ namespace BankingWebApplication.Controllers
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") != RoleEnum.Customer.ToString() || model == null || HttpContext.Session.GetString("CustomerNo") != model.CustomerNo.ToString())
             {
                 return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
+            if (model == null || GetAllAccounts(model.CustomerNo).Count == 0)
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - No accounts mapped" });
             }
             model.IsActive = true;
             model.CreatedDateTime = DateTime.Now;
