@@ -1,4 +1,6 @@
-﻿@model DAL.Entities.Customer
+﻿@using Microsoft.AspNetCore.Http
+@using DAL.Enum
+@model DAL.Entities.Customer
 
 @{
     ViewData["Title"] = "Edit";
@@ -55,10 +57,11 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@if (string.IsNullOrEmpty(Context.Session.GetString("UserRole")) && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+{ 
+    <span> | </span>
+    <a asp-action="Index" style="font-size: medium;font-weight: bold">Back to List</a>
+}
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

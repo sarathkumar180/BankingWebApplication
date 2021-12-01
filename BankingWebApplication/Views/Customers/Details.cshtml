@@ -1,4 +1,6 @@
-﻿@model DAL.Entities.Customer
+﻿@using Microsoft.AspNetCore.Http
+@using DAL.Enum
+@model DAL.Entities.Customer
 
 @{
     ViewData["Title"] = "Details";
@@ -55,6 +57,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-customerno="@Model.CustomerNo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-customerno="@Model.CustomerNo">Edit</a>
+    @if (string.IsNullOrEmpty(Context.Session.GetString("UserRole")) && Context.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+    { 
+        <span> | </span>
+        <a asp-action="Index" style="font-size: medium;font-weight: bold">Back to List</a>
+    }
 </div>

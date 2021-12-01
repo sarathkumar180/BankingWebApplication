@@ -30,6 +30,10 @@ namespace BankingWebApplication.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             IEnumerable<Customer> customers = customerbl.GetAllCustomer(_context);
             if (HttpContext.Session.GetString("UserRole") == RoleEnum.Teller.ToString())
             {
@@ -88,15 +92,22 @@ namespace BankingWebApplication.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? customerno)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || string.IsNullOrEmpty(HttpContext.Session.GetString("CustomerNo")) )
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (customerno == null)
             {
-                return NotFound();
+                return View("Error", new ErrorViewModel { RequestId = "Invalid request - access denied" });
             }
-
+            if(HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString() && customerno.Value.ToString() != HttpContext.Session.GetString("CustomerNo"))
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             var customer = customerbl.GetCustomerFromCustomerNo(customerno.Value,_context);
             if (customer == null)
             {
-                return NotFound();
+                return View("Error", new ErrorViewModel { RequestId = "Invalid request - access denied" });
             }
             return View(customer);
         }
@@ -146,7 +157,7 @@ namespace BankingWebApplication.Controllers
                 return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Access denied" });
 
             var customer = customerbl.GetCustomerFromCustomerNo(customerNo, _context);
-            if(customer == null || (customer.UserName == userName))
+            if(customer == null || (customer.UserName != userName))
                 return View("Error", new ErrorViewModel { RequestId = "Invalid request - Access denied" });
 
             List<SelectList> roles = new List<SelectList>();

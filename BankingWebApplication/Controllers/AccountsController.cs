@@ -36,7 +36,7 @@ namespace BankingWebApplication.Controllers
             if (HttpContext.Session.GetString("CustomerNo") != null)
             {
                 string header = "All Accounts";
-                if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+                if (id == null && HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
                 {
                     id = int.Parse(HttpContext.Session.GetString("CustomerNo"));
                 }
@@ -48,6 +48,15 @@ namespace BankingWebApplication.Controllers
                         if (string.IsNullOrEmpty(customer.CustomerRole))
                         {
                             return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Cannot create new accounts for the user.User Role not assigned" });
+                        }
+                        else if (customer.CustomerRole == RoleEnum.Teller.ToString() || customer.CustomerRole == RoleEnum.Admin.ToString())
+                        {
+                            return View("Error", new ErrorViewModel { RequestId = "Authorization Error - Cannot create new accounts other than customers" });
+                        }
+                        else if (customer.CustomerNo != id.Value)
+                        {
+                            return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+
                         }
                         header = $"Accounts : {customer.CustomerNo} / {customer.FirstName} {customer.LastName}";
                         TempData["CustomerNo"] = id;
@@ -102,6 +111,10 @@ namespace BankingWebApplication.Controllers
         // GET: Accounts/Create/{customerNo}
         public IActionResult OpenAccount(int? customerNo)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             var id = TempData["CustomerNo"];
             TempData.Keep("CustomerNo");
             if (customerNo != null)
@@ -125,7 +138,7 @@ namespace BankingWebApplication.Controllers
             acc.Interestrate = 0.02m;
             acc.AccountStatus = true;
             acc.Balance = 500.00m;
-            if (id != null && custList != null)
+            if (id != null)
             {
                 var customer = custList.FirstOrDefault(w => w.Value == id.ToString());
                 if (customer != null)
@@ -148,6 +161,10 @@ namespace BankingWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult OpenAccount([Bind("Balance,AccountNo,AccountType,CustomerNo,AccountStatus,Interestrate")] Account account)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             var customerNo = TempData["CustomerNo"];
             if (ModelState.IsValid)
             {
@@ -186,6 +203,10 @@ namespace BankingWebApplication.Controllers
         // GET: Accounts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -207,6 +228,10 @@ namespace BankingWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Balance,AccountNo,AccountType,CustomerNo,AccountStatus,MaturityDateTime,Interestrate")] Account account)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id != account.AccountNo)
             {
                 return NotFound();
@@ -243,6 +268,10 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Deposit(int? id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -256,7 +285,10 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Deposit(int? id, decimal amount)
         {
-
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -274,6 +306,10 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Withdraw(int? id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -291,6 +327,10 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public ActionResult Withdraw(int? id, decimal amount)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -310,7 +350,10 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Transfer(int? id, decimal amount)
         {
-
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -342,6 +385,10 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public IActionResult Transfer(int? id, int ToAccountno, decimal amount)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -411,9 +458,9 @@ namespace BankingWebApplication.Controllers
         private List<SelectListItem> GetAllCustomers()
         {
             List<SelectListItem> list = new List<SelectListItem>();
-            var allCustomers = customerBl.GetAllCustomer(_context);
-
-            if (allCustomers.Any(x => !string.IsNullOrEmpty(x.CustomerRole) && x.CustomerRole !=RoleEnum.Teller.ToString() ))
+            var allCustomers = customerBl.GetAllCustomer(_context).Where(x => !string.IsNullOrEmpty(x.CustomerRole) && x.CustomerRole != RoleEnum.Teller.ToString()).ToList();
+            
+            if (allCustomers.Any())
             {
                 foreach (var cust in allCustomers)
                 {

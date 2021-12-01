@@ -70,8 +70,7 @@
 
 </script>
 
-<h2>@TempData["Header"]</h2>
-
+<h2>Transfer to Payees</h2>
 <form asp-action="Index" method="post">
     <p>
 
@@ -79,14 +78,14 @@
            asp-route-payeeId="0" asp-route-newPayee="true" style="font-size: medium;font-weight: bold">Add New Payee</a>
     </p>
     
-    <br/>
-    <br/>
-    
-    @Html.Label("From Account: ")
-    @Html.DropDownList("Accounts", (IEnumerable<SelectListItem>)ViewBag.Accounts,new {@class="form-control",id="ddlAccounts", style= "font-size: medium;font-weight: bold" });
     
     <br/>
+    
+        @Html.Label("From Account: ")
+        @Html.DropDownList("Accounts", (IEnumerable<SelectListItem>) ViewBag.Accounts, new {@class = "form-control", id = "ddlAccounts", style = "font-size: medium;font-weight: bold"})
+    
     <br/>
+    
     <table id="tablePayee" class="table">
         <thead>
             <tr>
@@ -150,9 +149,12 @@
 
         </tbody>
     </table>
-
-    <div class="form-group">
-        <input id="btnPay" type="submit" value="Pay" class="btn btn-default" disabled="disabled" onclick="validate(); return false;"/>
-    </div>
+    
+    @if (Model != null && Model.Any())
+    {
+        <div class="form-group">
+            <input id="btnPay" type="submit" value="Pay" class="btn btn-default" disabled="disabled" onclick="validate();return false;"/>
+        </div>
+    }
 
 </form>

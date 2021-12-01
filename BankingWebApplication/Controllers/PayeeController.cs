@@ -26,6 +26,10 @@ namespace BankingWebApplication.Controllers
         }
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             if (HttpContext.Session.GetString("UserRole") == RoleEnum.Customer.ToString() &&
                 !string.IsNullOrEmpty(HttpContext.Session.GetString("CustomerNo")))
             {
@@ -44,8 +48,8 @@ namespace BankingWebApplication.Controllers
                 }
                 else
                 {
-                    ViewBag.Accounts = null;
-                    return View();
+                    ViewBag.Accounts = new List<SelectListItem>();
+                    return View(new List<Payee>());
                 }
             }
 
@@ -55,6 +59,10 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public IActionResult Index(IEnumerable<Payee> model)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") != RoleEnum.Customer.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             var enumerable = model as Payee[] ?? model.ToArray();
             if (enumerable.Any(x => x.IsChecked && x.AmountToPay > 0))
             {
@@ -70,6 +78,10 @@ namespace BankingWebApplication.Controllers
 
         public IActionResult Payee(int customerNo, int payeeId, bool newPayee)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") != RoleEnum.Customer.ToString() || HttpContext.Session.GetString("CustomerNo") != customerNo.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
             var loggedInUser = HttpContext.Session.GetString("CustomerNo");
             var customer = customerbl.GetCustomerFromCustomerNo(customerNo, _context);
             if (customer != null && loggedInUser == customer.CustomerNo.ToString())
@@ -106,11 +118,16 @@ namespace BankingWebApplication.Controllers
         [HttpPost]
         public IActionResult Payee(Payee model)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserRole")) || HttpContext.Session.GetString("UserRole") != RoleEnum.Customer.ToString() || model == null || HttpContext.Session.GetString("CustomerNo") != model.CustomerNo.ToString())
+            {
+                return View("Error", new ErrorViewModel { RequestId = "Authorization Error - access denied" });
+            }
+            model.IsActive = true;
+            model.CreatedDateTime = DateTime.Now;
+            model.IsDeleted = false;
             if (ModelState.IsValid)
             {
-                model.IsActive = true;
-                model.CreatedDateTime = DateTime.Now;
-                model.IsDeleted = false;
+                
                 bool success = customerbl.AddOrUpdatePayee(model, _context);
                 if (success)
                 {
