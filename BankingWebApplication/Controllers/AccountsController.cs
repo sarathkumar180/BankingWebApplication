@@ -418,7 +418,7 @@ namespace BankingWebApplication.Controllers
                 var account = accountbl.GetAccount(id.Value, _context);
 
                 var allTxns = accountbl.GetTransaction(account.AccountNo, _context);
-                var list = allTxns.Where(x => x.Accountno == account.AccountNo && x.CustomerId == account.CustomerNo).Take(10).OrderByDescending(t => t.Time);
+                var list = allTxns.Where(x => x.Accountno == account.AccountNo).Take(10).OrderByDescending(t => t.Time);
 
                 return View(list);
             }

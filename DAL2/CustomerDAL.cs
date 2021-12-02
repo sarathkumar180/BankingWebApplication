@@ -196,7 +196,8 @@ namespace DAL
         {
 
             var allCUstomers = (from c in context.Customer
-                                join m in context.UserRolesMapping on c.Id equals m.CustomerId
+                                join m in context.UserRolesMapping on c.Id equals m.CustomerId into urm
+                                from urMapping in urm.DefaultIfEmpty()
                                 select new Customer()
                                 {
                                     Id = c.Id,
@@ -207,7 +208,7 @@ namespace DAL
                                     Email = c.Email,
                                     FirstName = c.FirstName,
                                     LastName = c.LastName,
-                                    CustomerRole = m != null ? ((RoleEnum)m.RoleId).ToString() : string.Empty
+                                    CustomerRole = urMapping != null ? ((RoleEnum)urMapping.RoleId).ToString() : string.Empty
                                 }).AsEnumerable();
 
             return allCUstomers;
