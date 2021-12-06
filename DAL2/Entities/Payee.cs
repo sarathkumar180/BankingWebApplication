@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +8,7 @@ namespace DAL.Entities
     public class Payee
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
@@ -39,5 +41,13 @@ namespace DAL.Entities
 
         [NotMapped]
         public int FromAccountNo { get; set; }
+
+        public Payee()
+        {
+            PaymentHistory = new HashSet<PaymentHistory>();
+        }
+
+        public virtual Customer Customer { get; set; }
+        public virtual ICollection<PaymentHistory> PaymentHistory { get; set; }
     }
 }

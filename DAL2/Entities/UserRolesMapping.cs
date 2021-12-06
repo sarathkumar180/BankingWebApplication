@@ -7,6 +7,7 @@ namespace DAL.Entities
     public class UserRolesMapping
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
         public int CustomerId { get; set; }
@@ -18,5 +19,8 @@ namespace DAL.Entities
         public string CustomerName { get; set; }
         [NotMapped]
         public string RoleName { get; set; }
+
+        public virtual Customer Customer { get; set; }
+        public virtual Roles Role { get; set; }
     }
 }

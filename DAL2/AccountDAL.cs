@@ -27,13 +27,13 @@ namespace DAL
         #region List<IAccount> GetAllAccount()
         public IEnumerable<Account> GetAllAccount(ApplicationDbContext _context)
         {
-            var allAccounts = _context.Account.Include(a => a.customer);
+            var allAccounts = _context.Account.Include(a => a.Customer);
 
             if (allAccounts != null && allAccounts.Any())
             {
                 
                 var accounts =  allAccounts.ToList();
-                accounts.ForEach( x => x.CustomerNo =  x.customer?.CustomerNo ?? 0);
+                accounts.ForEach( x => x.CustomerNo =  x.Customer?.CustomerNo ?? 0);
                 return accounts;
             }
 

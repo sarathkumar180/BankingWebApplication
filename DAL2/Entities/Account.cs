@@ -8,8 +8,7 @@ namespace DAL.Entities
     public class Account : IAccount
     {
 
-
-        [Required]
+        [NotMapped]
         [Range(0, float.MaxValue, ErrorMessage = "Amount can not be negative")]
         public decimal Amount;
 
@@ -17,18 +16,16 @@ namespace DAL.Entities
         public decimal Balance { get; set; }
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        [Index(IsUnique = true)]
         public int AccountNo { get; set; }
-       
         public string AccountType { get; set; }
         [NotMapped]
         public int CustomerNo { get; set; }
         public int CustomerId { get; set; }
         public bool AccountStatus { get; set; }
 
-        public Customer customer { get; set; }
+        public Customer Customer { get; set; }
 
         //public List<Transaction> transactions { get; set; }
         [NotMapped]
@@ -36,8 +33,7 @@ namespace DAL.Entities
 
 
         protected static List<IAccount> accounts = new List<IAccount>();
-
-        
+        public virtual ICollection<PaymentHistory> PaymentHistory { get; set; }
         public decimal Interestrate { get; set; }
 
         [NotMapped]
@@ -49,7 +45,8 @@ namespace DAL.Entities
         public Account()
         {
             AccountStatus = true;
-       
+            PaymentHistory = new HashSet<PaymentHistory>();
+
         }
 
         public virtual void OpenAccount(IAccount account)
@@ -89,9 +86,7 @@ namespace DAL.Entities
         {
             return Interestrate;
         }
-
-
-
+        
         public virtual string GetAccountType()
         {
             return AccountType;
@@ -225,19 +220,12 @@ namespace DAL.Entities
 
 
         }
-
-
-
-
-
+        
         public virtual string GetAccountType(IAccount account)
         {
             Console.WriteLine("Base GetAccountType");
             return "Base of Account";
         }
-
-
-       
 
         public IAccount GetAccountByAccountno(int accno)
         {

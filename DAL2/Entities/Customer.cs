@@ -7,6 +7,8 @@ namespace DAL.Entities
 {
     public class Customer
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int CustomerNo { get; set; }
 
@@ -41,8 +43,20 @@ namespace DAL.Entities
         [NotMapped]
         public string CustomerRole { get; set; }
 
-     
 
-        public List<Account> accounts = new List<Account>();
+        public virtual ICollection<Account> Account { get; set; }
+        public virtual ICollection<Payee> Payee { get; set; }
+        public virtual ICollection<PaymentHistory> PaymentHistory { get; set; }
+        public virtual ICollection<Transaction> Transaction { get; set; }
+        public virtual ICollection<UserRolesMapping> UserRolesMapping { get; set; }
+
+        public Customer()
+        {
+            Account = new HashSet<Account>();
+            Payee = new HashSet<Payee>();
+            PaymentHistory = new HashSet<PaymentHistory>();
+            Transaction = new HashSet<Transaction>();
+            UserRolesMapping = new HashSet<UserRolesMapping>();
+        }
     }
 }

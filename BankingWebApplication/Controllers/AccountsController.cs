@@ -98,7 +98,7 @@ namespace BankingWebApplication.Controllers
             }
 
             var account = await _context.Account
-                .Include(a => a.customer)
+                .Include(a => a.Customer)
                 .FirstOrDefaultAsync(m => m.AccountNo == id);
             if (account == null)
             {

@@ -18,7 +18,7 @@ namespace DAL.Entities
         //Customer customer { get; set; } // account belong to 1 customer
         decimal Interestrate { get; set; }
         int CustomerId { get; set; }
-        Customer customer { get; set; }
+        Customer Customer { get; set; }
 
      
 

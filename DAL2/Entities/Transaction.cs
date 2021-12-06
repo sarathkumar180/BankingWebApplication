@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,9 +12,9 @@ namespace DAL.Entities
         }
 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Index(IsUnique = true)]
         public int TransactionNo { get; set; }
        
         public int Accountno { get; set; }
@@ -24,9 +23,7 @@ namespace DAL.Entities
 
         public DateTime Time { get; set; }
         public string TransactionType { get; set; }
-       
-        public static List<Transaction> transactions = new List<Transaction>();
-
+        public virtual Customer Customer { get; set; }
 
         static public int GenerateTransactionNo()
         {
